@@ -930,19 +930,14 @@
       const btnBackHub = document.getElementById('btn-back-hub');
       const navLabTitle = document.getElementById('nav-lab-title');
 
-      // Scroll management: Hub is ALWAYS scrollable so all cards and footer are accessible
+      // Scroll management: Hub is scrollable so all cards and footer are accessible
       if (targetLab === 'hub') {
         document.body.classList.remove('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
         document.body.classList.add('overflow-y-auto');
       } else {
-        // Diagram views: Lock to 1-screen cockpit only on large desktop viewports
-        if (window.innerWidth >= 1024 && window.innerHeight >= 700) {
-          document.body.classList.add('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
-          document.body.classList.remove('overflow-y-auto');
-        } else {
-          document.body.classList.remove('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
-          document.body.classList.add('overflow-y-auto');
-        }
+        // Diagram views: 100% Locked 1-Screen Cockpit on desktop/laptop (Zero Scroll)
+        document.body.classList.add('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
+        document.body.classList.remove('overflow-y-auto');
       }
       window.scrollTo(0, 0);
 
