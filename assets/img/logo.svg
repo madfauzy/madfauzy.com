@@ -1,20 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <defs>
-    <linearGradient id="braceGrad" x1="10" y1="15" x2="90" y2="85" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#6ee7b7"/>
-      <stop offset="45%" stop-color="#10b981"/>
-      <stop offset="100%" stop-color="#06b6d4"/>
-    </linearGradient>
-    <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
-      <feGaussianBlur stdDeviation="3.5" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
   <path d="M 43 14 C 27 14 23 27 23 39 C 23 46 15 48 11 50 C 15 52 23 54 23 61 C 23 73 27 86 43 86" 
-        stroke="url(#braceGrad)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+        stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M 57 14 C 73 14 77 27 77 39 C 77 46 85 48 89 50 C 85 52 77 54 77 61 C 77 73 73 86 57 86" 
-        stroke="url(#braceGrad)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+        stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
