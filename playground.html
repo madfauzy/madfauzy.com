@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Request Flow &amp; Cache Simulator — Ahmad Fauzy</title>
-  <meta name="description" content="Simulasi visual sederhana alur data request dan Redis caching pada transaksi backend.">
+  <title>Architecture Flow Simulator — Ahmad Fauzy</title>
+  <meta name="description" content="Simulasi visual diagram arsitektur backend: alur request transaksi, Redis caching, dan database MySQL.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://madfauzy.com/playground">
 
@@ -38,41 +38,39 @@
       color: #ffffff;
     }
 
-    /* Ambient background grid */
-    .bg-grid-dots {
-      background-size: 28px 28px;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    /* Subtle architectural engineering grid */
+    .blueprint-grid {
+      background-size: 30px 30px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    /* Pipeline flowing dashes */
-    @keyframes flow-dash {
+    /* Flowing dashed pipelines */
+    @keyframes dash-forward {
       to {
-        stroke-dashoffset: -20;
+        stroke-dashoffset: -24;
       }
     }
-    .flow-line {
-      stroke-dasharray: 4 6;
-      animation: flow-dash 1s linear infinite;
-    }
-    .flow-line-paused {
-      animation-play-state: paused;
+    .pipeline-wire {
+      stroke-dasharray: 4 8;
+      animation: dash-forward 0.8s linear infinite;
     }
 
-    /* Node active glows */
-    .glow-emerald {
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.35), inset 0 0 15px rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.8) !important;
+    /* Node hover effects */
+    .diag-node {
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
-    .glow-amber {
-      box-shadow: 0 0 35px rgba(245, 158, 11, 0.35), inset 0 0 15px rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.8) !important;
+    .diag-node:hover {
+      filter: brightness(1.2);
     }
   </style>
 </head>
-<body class="bg-[#060709] text-slate-200 font-sans antialiased min-h-screen bg-grid-dots flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white">
+<body class="bg-[#060709] text-slate-200 font-sans antialiased min-h-screen blueprint-grid flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white">
 
   <!-- NAVBAR -->
-  <header class="border-b border-white/[0.06] bg-[#060709]/80 backdrop-blur-xl sticky top-0 z-50">
+  <header class="border-b border-white/[0.06] bg-[#060709]/85 backdrop-blur-xl sticky top-0 z-50">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <a href="/" class="group flex items-center gap-2 text-sm font-mono tracking-tight">
         <span class="text-white group-hover:text-emerald-400 font-bold transition-colors">{ }</span>
@@ -82,188 +80,225 @@
 
       <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
         <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-        <span>Portfolio</span>
+        <span>Kembali ke Portfolio</span>
       </a>
     </div>
   </header>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex-1 flex flex-col justify-center">
+  <!-- MAIN DIAGRAM WORKBENCH -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-center">
 
-    <!-- Header Section -->
-    <div class="text-center max-w-2xl mx-auto mb-10">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
-        <i data-lucide="git-merge" class="w-3 h-3"></i>
-        <span>Visual Flow Simulator</span>
+    <!-- Header Description -->
+    <div class="text-center max-w-xl mx-auto mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+        <i data-lucide="network" class="w-3.5 h-3.5"></i>
+        <span>Architecture Flowchart</span>
       </div>
-      <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-        Alur Request &amp; Redis Cache
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+        Diagram Alur Arsitektur Request
       </h1>
       <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
-        Lihat bagaimana data transaksi kasir mengalir. Saat Redis aktif, data diambil langsung dari memori RAM tanpa menyentuh disk database.
+        Visualisasi diagram sistem: bagaimana request dari Kasir POS diproses oleh Backend, dialirkan ke Redis RAM, atau diteruskan ke Database MySQL.
       </p>
     </div>
 
-    <!-- CONTROLLER (Hanya 2 Kontrol Sederhana) -->
-    <div class="flex flex-wrap items-center justify-center gap-4 mb-10">
+    <!-- CONTROLS BAR (Super Simple) -->
+    <div class="flex flex-wrap items-center justify-center gap-4 mb-6">
       
       <!-- Primary Action: Send Request -->
-      <button id="btn-send" onclick="triggerFlow()" class="flex items-center gap-2 px-6 py-3 rounded-xl font-mono text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_25px_rgba(16,185,129,0.3)] active:scale-95 transition-all cursor-pointer">
+      <button id="btn-fire" onclick="simulatePacket()" class="flex items-center gap-2.5 px-6 py-3 rounded-xl font-mono text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_25px_rgba(16,185,129,0.35)] active:scale-95 transition-all cursor-pointer">
         <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-        <span>Kirim Request Transaksi</span>
+        <span>Simulasikan Alur Data</span>
         <span class="opacity-60 text-xs font-normal hidden sm:inline">[Spasi]</span>
       </button>
 
-      <!-- Toggle: Redis Cache -->
-      <button id="btn-toggle" onclick="toggleRedis()" class="flex items-center gap-2.5 px-4 py-3 rounded-xl font-mono text-xs border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
-        <span id="toggle-indicator" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <!-- Toggle: Redis Cache Layer -->
+      <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-2.5 px-4 py-3 rounded-xl font-mono text-xs border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
+        <span id="cache-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         <span>Redis Cache:</span>
-        <strong id="toggle-status" class="text-emerald-400 font-bold">AKTIF</strong>
+        <strong id="cache-status-text" class="text-emerald-400 font-bold">AKTIF (RAM)</strong>
       </button>
 
     </div>
 
-    <!-- FLOW DIAGRAM CANVAS -->
-    <div class="relative bg-[#0b0e14] border border-white/10 rounded-2xl p-6 sm:p-10 mb-8 overflow-hidden shadow-2xl">
+    <!-- REAL ARCHITECTURAL SVG DIAGRAM -->
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-4 sm:p-8 shadow-2xl overflow-hidden">
       
-      <!-- SVG Connecting Conduits (Lines between nodes) -->
-      <div class="hidden md:block absolute inset-0 pointer-events-none z-0">
-        <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 900 240">
-          <defs>
-            <!-- Emerald Glow Filter -->
-            <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-            <!-- Amber Glow Filter -->
-            <filter id="glow-amber" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
+      <svg id="architecture-diagram" viewBox="0 0 960 480" class="w-full h-auto" style="min-height: 340px;">
+        <defs>
+          <!-- Neon Glow Filter: Emerald -->
+          <filter id="glow-emerald" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
 
-          <!-- Pipe 1: POS -> Backend -->
-          <line x1="160" y1="120" x2="310" y2="120" stroke="#1f293d" stroke-width="3" />
-          <line id="wire-1" class="flow-line" x1="160" y1="120" x2="310" y2="120" stroke="#10b981" stroke-width="3" opacity="0.7" />
+          <!-- Neon Glow Filter: Amber -->
+          <filter id="glow-amber" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
 
-          <!-- Pipe 2: Backend -> Redis -->
-          <line x1="430" y1="120" x2="570" y2="120" stroke="#1f293d" stroke-width="3" />
-          <line id="wire-2" class="flow-line" x1="430" y1="120" x2="570" y2="120" stroke="#10b981" stroke-width="3" opacity="0.7" />
+          <!-- Marker Arrowheads -->
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+          </marker>
+          <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
+          </marker>
 
-          <!-- Pipe 3: Redis -> MySQL -->
-          <line x1="690" y1="120" x2="800" y2="120" stroke="#1f293d" stroke-width="3" />
-          <line id="wire-3" class="flow-line" x1="690" y1="120" x2="800" y2="120" stroke="#f59e0b" stroke-width="3" opacity="0.3" />
+          <!-- Linear Gradients for Nodes -->
+          <linearGradient id="grad-client" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#141c2b" />
+            <stop offset="100%" stop-color="#0c121d" />
+          </linearGradient>
 
-          <!-- Moving Energy Bead (Particle) -->
-          <circle id="energy-bead" cx="120" cy="120" r="7" fill="#10b981" filter="url(#glow-green)" opacity="0" />
-        </svg>
-      </div>
+          <linearGradient id="grad-server" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0e2329" />
+            <stop offset="100%" stop-color="#09141a" />
+          </linearGradient>
 
-      <!-- Diagram Nodes (4 Simple Steps) -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
-        
-        <!-- Node 1: Client POS -->
-        <div id="box-pos" class="p-5 rounded-2xl bg-[#0e121a] border border-white/10 flex flex-col items-center text-center transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-3" id="icon-pos">
-            <i data-lucide="tablet-smartphone" class="w-6 h-6 text-emerald-400"></i>
-          </div>
-          <div class="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-0.5">1. Klien</div>
-          <div class="text-sm font-bold text-white mb-1">Kasir POS</div>
-          <div class="text-[11px] font-mono text-slate-400">Scan Barcode SKU</div>
-          <div class="mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]">
-            JSON Request
-          </div>
-        </div>
+          <linearGradient id="grad-redis" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#24131a" />
+            <stop offset="100%" stop-color="#140a0f" />
+          </linearGradient>
 
-        <!-- Node 2: Backend App -->
-        <div id="box-app" class="p-5 rounded-2xl bg-[#0e121a] border border-white/10 flex flex-col items-center text-center transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-3" id="icon-app">
-            <i data-lucide="cpu" class="w-6 h-6 text-cyan-400"></i>
-          </div>
-          <div class="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-0.5">2. Backend</div>
-          <div class="text-sm font-bold text-white mb-1">Go / Laravel</div>
-          <div class="text-[11px] font-mono text-slate-400">Cek Cache Pertama</div>
-          <div class="mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-            Routing &amp; Logic
-          </div>
-        </div>
+          <linearGradient id="grad-mysql" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#111c2b" />
+            <stop offset="100%" stop-color="#090f18" />
+          </linearGradient>
+        </defs>
 
-        <!-- Node 3: Redis RAM -->
-        <div id="box-redis" class="p-5 rounded-2xl bg-[#0e121a] border border-emerald-500/30 flex flex-col items-center text-center transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-3" id="icon-redis">
-            <i data-lucide="zap" class="w-6 h-6 text-rose-400"></i>
-          </div>
-          <div class="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-0.5">3. In-Memory</div>
-          <div class="text-sm font-bold text-white mb-1">Redis Cache</div>
-          <div class="text-[11px] font-mono text-emerald-400" id="redis-state-text">RAM (Super Cepat)</div>
-          <div class="mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20" id="redis-badge">
-            O(1) Memory
-          </div>
-        </div>
+        <!-- PIPELINE 1: Client -> Backend (Base Wire + Flow Wire) -->
+        <g id="pipe-client-backend">
+          <line x1="180" y1="240" x2="350" y2="240" stroke="#1e293b" stroke-width="4" stroke-linecap="round" />
+          <line id="wire-cb" class="pipeline-wire" x1="180" y1="240" x2="350" y2="240" stroke="#10b981" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-green)" />
+          <text x="265" y="228" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="middle">HTTP POST /sku</text>
+        </g>
 
-        <!-- Node 4: MySQL Disk -->
-        <div id="box-mysql" class="p-5 rounded-2xl bg-[#0e121a] border border-white/10 flex flex-col items-center text-center transition-all duration-300 opacity-60">
-          <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-400 mb-3" id="icon-mysql">
-            <i data-lucide="database" class="w-6 h-6 text-sky-400"></i>
-          </div>
-          <div class="text-[10px] font-mono text-slate-500 uppercase tracking-wider mb-0.5">4. Storage</div>
-          <div class="text-sm font-bold text-white mb-1">MySQL Database</div>
-          <div class="text-[11px] font-mono text-slate-400" id="mysql-state-text">Membaca Hard Disk</div>
-          <div class="mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]" id="mysql-badge">
-            InnoDB Storage
-          </div>
-        </div>
+        <!-- PIPELINE 2: Backend -> Redis (Upper Branch Curve) -->
+        <g id="pipe-backend-redis">
+          <path d="M 480 240 C 550 240, 570 140, 660 140" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round" />
+          <path id="wire-br" class="pipeline-wire" d="M 480 240 C 550 240, 570 140, 660 140" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-green)" />
+          <text x="540" y="165" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">1. Cek Cache</text>
+        </g>
 
-      </div>
+        <!-- PIPELINE 3: Redis -> MySQL (Cache Miss Vertical Connector) -->
+        <g id="pipe-redis-mysql">
+          <line x1="730" y1="185" x2="730" y2="295" stroke="#1e293b" stroke-width="4" stroke-linecap="round" />
+          <line id="wire-rm" class="pipeline-wire" x1="730" y1="185" x2="730" y2="295" stroke="#334155" stroke-width="3" stroke-linecap="round" opacity="0.4" marker-end="url(#arrow-dim)" />
+          <text id="label-miss" x="785" y="245" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Cache Miss ➔</text>
+        </g>
 
-      <!-- Flow Status Banner (Di bawah diagram) -->
-      <div id="status-card" class="mt-6 p-4 rounded-xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left transition-all">
-        <div class="flex items-center gap-2.5">
-          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400" id="status-dot"></div>
-          <span class="text-xs sm:text-sm font-mono text-slate-300" id="status-msg">
-            Siap. Tekan <strong>"Kirim Request Transaksi"</strong> untuk melihat pergerakan data.
+        <!-- PIPELINE 4: Return from Redis (Cache Hit Return Flow) -->
+        <path id="wire-redis-return" d="M 660 120 C 520 70, 280 70, 130 180" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 6" opacity="0.3" marker-end="url(#arrow-green)" />
+        <text id="label-hit-return" x="380" y="80" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="11" opacity="0.8" text-anchor="middle">⚡ Fast Path: 2ms Response (RAM)</text>
+
+        <!-- PIPELINE 5: Return from MySQL (Disk Query Return Flow) -->
+        <path id="wire-mysql-return" d="M 660 360 C 540 410, 280 410, 130 300" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 6" opacity="0.2" marker-end="url(#arrow-amber)" />
+        <text id="label-disk-return" x="380" y="425" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" opacity="0.6" text-anchor="middle">🐢 Slow Path: 138ms Response (InnoDB Disk)</text>
+
+        <!-- TRAVELING ENERGY PACKET (ANIMATED PARTICLE) -->
+        <circle id="pulse-packet" cx="130" cy="240" r="8" fill="#10b981" filter="url(#glow-emerald)" opacity="0" />
+
+        <!-- ==================== DIAGRAM NODES ==================== -->
+
+        <!-- NODE 1: CLIENT (POS DEVICE) -->
+        <g id="node-pos" class="diag-node" transform="translate(130, 240)">
+          <!-- Outer Halo -->
+          <rect id="halo-pos" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
+          <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-client)" stroke="#1e293b" stroke-width="1.5" />
+          
+          <!-- Vector Icon: Mobile POS -->
+          <rect x="-18" y="-30" width="36" height="50" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+          <rect x="-14" y="-25" width="28" height="32" rx="2" fill="#1e293b" />
+          <line x1="-8" y1="-12" x2="8" y2="-12" stroke="#10b981" stroke-width="1.5" />
+          <line x1="-8" y1="-6" x2="4" y2="-6" stroke="#10b981" stroke-width="1.5" />
+          <circle cx="0" cy="14" r="2.5" fill="#10b981" />
+
+          <!-- Labels -->
+          <text x="0" y="72" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" text-anchor="middle">Kasir POS</text>
+          <text x="0" y="88" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Merchant Client</text>
+        </g>
+
+        <!-- NODE 2: BACKEND (GO / LARAVEL MICROSERVICE) -->
+        <g id="node-backend" class="diag-node" transform="translate(420, 240)">
+          <!-- Outer Halo -->
+          <rect id="halo-backend" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
+          <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-server)" stroke="#1e293b" stroke-width="1.5" />
+
+          <!-- Vector Icon: Server Microchip / Router -->
+          <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#082026" stroke="#06b6d4" stroke-width="1.5" />
+          <circle cx="0" cy="0" r="9" fill="none" stroke="#06b6d4" stroke-width="2" />
+          <circle cx="0" cy="0" r="4" fill="#06b6d4" />
+          <!-- Pin connectors -->
+          <line x1="-15" y1="-28" x2="-15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+          <line x1="0" y1="-28" x2="0" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+          <line x1="15" y1="-28" x2="15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+          <line x1="-15" y1="24" x2="-15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+          <line x1="0" y1="24" x2="0" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+          <line x1="15" y1="24" x2="15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+
+          <!-- Labels -->
+          <text x="0" y="72" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" text-anchor="middle">Backend Core</text>
+          <text x="0" y="88" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Go / Laravel App</text>
+        </g>
+
+        <!-- NODE 3: REDIS CLUSTER (IN-MEMORY RAM) -->
+        <g id="node-redis" class="diag-node" transform="translate(730, 140)">
+          <!-- Outer Halo -->
+          <rect id="halo-redis" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#10b981" stroke-width="2" />
+          <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-redis)" stroke="#e11d48" stroke-width="1.5" />
+
+          <!-- Vector Icon: Hexagonal Lightning RAM Cache -->
+          <polygon points="0,-22 20,-11 20,11 0,22 -20,11 -20,-11" fill="#2d0f19" stroke="#f43f5e" stroke-width="1.5" />
+          <path d="M 2 -12 L -7 1 L 1 1 L -2 12 L 7 -1 L -1 -1 Z" fill="#fb7185" />
+
+          <!-- Labels -->
+          <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" text-anchor="middle">Redis Cache</text>
+          <text id="node-redis-sub" x="0" y="76" fill="#10b981" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="10" text-anchor="middle">In-Memory RAM O(1)</text>
+        </g>
+
+        <!-- NODE 4: MYSQL DATABASE (DISK STORAGE) -->
+        <g id="node-mysql" class="diag-node" transform="translate(730, 340)">
+          <!-- Outer Halo -->
+          <rect id="halo-mysql" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+          <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-mysql)" stroke="#1e293b" stroke-width="1.5" />
+
+          <!-- Vector Icon: Database Cylinder -->
+          <g transform="translate(0, -6)">
+            <!-- Top Ellipse -->
+            <ellipse cx="0" cy="-14" rx="20" ry="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+            <!-- Middle Cylinder Segment -->
+            <path d="M -20 -14 L -20 0 A 20 6 0 0 0 20 0 L 20 -14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+            <!-- Bottom Cylinder Segment -->
+            <path d="M -20 0 L -20 14 A 20 6 0 0 0 20 14 L 20 0" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+          </g>
+
+          <!-- Labels -->
+          <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" text-anchor="middle">MySQL Aurora RDS</text>
+          <text id="node-mysql-sub" x="0" y="76" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">InnoDB Disk Storage</text>
+        </g>
+
+      </svg>
+
+      <!-- FLOATING TELEMETRY CAPSULE (Under diagram) -->
+      <div class="mt-4 pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3 font-mono text-xs">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400" id="flow-indicator-light"></span>
+          <span id="flow-narrative" class="text-slate-300">
+            Sistem Standby. Tekan <strong>"Simulasikan Alur Data"</strong> untuk melihat pergerakan request.
           </span>
         </div>
-        <div class="text-xs font-mono px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold" id="status-badge">
-          STATUS: READY
-        </div>
-      </div>
-
-    </div>
-
-    <!-- SIMPLE STATS (Hanya 2 Angka Inti) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      
-      <!-- Box 1: Kecepatan Latensi -->
-      <div class="p-5 rounded-2xl bg-[#0b0e14] border border-white/10 flex items-center justify-between">
-        <div>
-          <div class="text-xs font-mono text-slate-400 mb-1">TOTAL WAKTU RESPON</div>
-          <div class="flex items-baseline gap-1.5">
-            <span id="stat-latency" class="text-3xl font-mono font-bold text-emerald-400">2.1</span>
-            <span class="text-sm font-mono text-slate-400">ms</span>
-          </div>
-          <div class="text-[11px] font-mono text-emerald-400/90 mt-1" id="stat-latency-desc">
-            ⚡ Instan (Langsung diambil dari RAM)
-          </div>
-        </div>
-        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-          <i data-lucide="zap" class="w-6 h-6"></i>
-        </div>
-      </div>
-
-      <!-- Box 2: Beban Database -->
-      <div class="p-5 rounded-2xl bg-[#0b0e14] border border-white/10 flex items-center justify-between">
-        <div>
-          <div class="text-xs font-mono text-slate-400 mb-1">STATUS DATABASE MYSQL</div>
-          <div id="stat-db-title" class="text-xl sm:text-2xl font-mono font-bold text-white">
-            0 Beban Disk
-          </div>
-          <div class="text-[11px] font-mono text-slate-400 mt-1" id="stat-db-desc">
-            Database aman dan terlindungi dari query berat
-          </div>
-        </div>
-        <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-400" id="stat-db-icon">
-          <i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 rounded bg-white/[0.04] border border-white/10 text-slate-300">
+            Latency: <strong id="val-latency" class="text-emerald-400 font-bold">2.1 ms</strong>
+          </span>
+          <span class="px-2.5 py-1 rounded bg-white/[0.04] border border-white/10 text-slate-300">
+            DB Disk: <strong id="val-db-load" class="text-emerald-400 font-bold">0 IOPS (Idle)</strong>
+          </span>
         </div>
       </div>
 
@@ -274,7 +309,7 @@
   <!-- FOOTER -->
   <footer class="border-t border-white/[0.06] py-6 text-center text-xs font-mono text-slate-500">
     <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <span>{ } madfauzy.com • Request Flow Simulator</span>
+      <span>{ } madfauzy.com • Architecture Diagram Simulator</span>
       <div class="flex items-center gap-4">
         <a href="/" class="hover:text-emerald-400 transition-colors">← Kembali ke Portfolio</a>
         <a href="https://github.com/madfauzy" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">GitHub</a>
@@ -283,210 +318,218 @@
     </div>
   </footer>
 
-  <!-- SCRIPT LOGIC (CLEAN & SIMPLE) -->
+  <!-- GSAP SIMULATION ENGINE -->
   <script>
-    let isRedisActive = true;
-    let isRunning = false;
+    let redisEnabled = true;
+    let isBusy = false;
 
-    // Initialize Lucide icons
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
     });
 
-    // Toggle Redis ON / OFF
-    function toggleRedis() {
-      if (isRunning) return;
-      isRedisActive = !isRedisActive;
+    // Toggle Redis Active State
+    function toggleRedisCache() {
+      if (isBusy) return;
+      redisEnabled = !redisEnabled;
 
-      const btn = document.getElementById('btn-toggle');
-      const indicator = document.getElementById('toggle-indicator');
-      const statusText = document.getElementById('toggle-status');
-      const boxRedis = document.getElementById('box-redis');
-      const redisText = document.getElementById('redis-state-text');
-      const redisBadge = document.getElementById('redis-badge');
-      const wire2 = document.getElementById('wire-2');
-      const wire3 = document.getElementById('wire-3');
+      const btn = document.getElementById('btn-toggle-redis');
+      const dot = document.getElementById('cache-indicator-dot');
+      const statusText = document.getElementById('cache-status-text');
+      const haloRedis = document.getElementById('halo-redis');
+      const redisSub = document.getElementById('node-redis-sub');
+      const wireBr = document.getElementById('wire-br');
+      const wireRm = document.getElementById('wire-rm');
+      const labelMiss = document.getElementById('label-miss');
+      const returnHit = document.getElementById('wire-redis-return');
+      const labelHit = document.getElementById('label-hit-return');
 
-      if (isRedisActive) {
+      if (redisEnabled) {
         btn.className = "flex items-center gap-2.5 px-4 py-3 rounded-xl font-mono text-xs border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer";
-        indicator.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
         statusText.className = "text-emerald-400 font-bold";
-        statusText.innerText = "AKTIF";
+        statusText.innerText = "AKTIF (RAM)";
 
-        boxRedis.style.opacity = "1";
-        redisText.className = "text-[11px] font-mono text-emerald-400";
-        redisText.innerText = "RAM (Super Cepat)";
-        redisBadge.className = "mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20";
-        redisBadge.innerText = "O(1) Memory";
+        haloRedis.setAttribute('stroke', '#10b981');
+        redisSub.setAttribute('fill', '#10b981');
+        redisSub.textContent = "In-Memory RAM O(1)";
 
-        if (wire2) wire2.setAttribute('stroke', '#10b981');
-        if (wire3) wire3.setAttribute('opacity', '0.3');
+        wireBr.setAttribute('stroke', '#10b981');
+        wireRm.setAttribute('stroke', '#334155');
+        wireRm.setAttribute('opacity', '0.2');
+        labelMiss.setAttribute('fill', '#475569');
+
+        returnHit.setAttribute('opacity', '0.5');
+        labelHit.setAttribute('opacity', '0.8');
       } else {
         btn.className = "flex items-center gap-2.5 px-4 py-3 rounded-xl font-mono text-xs border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300 hover:border-amber-500/50 cursor-pointer";
-        indicator.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+        dot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
         statusText.className = "text-amber-400 font-bold";
-        statusText.innerText = "DIMATIKAN";
+        statusText.innerText = "BYPASSED (OFF)";
 
-        boxRedis.style.opacity = "0.5";
-        redisText.className = "text-[11px] font-mono text-slate-500";
-        redisText.innerText = "Bypassed (Off)";
-        redisBadge.className = "mt-3 text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-slate-500 border border-white/[0.06]";
-        redisBadge.innerText = "Bypassed";
+        haloRedis.setAttribute('stroke', '#475569');
+        redisSub.setAttribute('fill', '#64748b');
+        redisSub.textContent = "Bypassed (Off)";
 
-        if (wire2) wire2.setAttribute('stroke', '#f59e0b');
-        if (wire3) wire3.setAttribute('opacity', '0.8');
+        wireBr.setAttribute('stroke', '#f59e0b');
+        wireRm.setAttribute('stroke', '#f59e0b');
+        wireRm.setAttribute('opacity', '0.8');
+        wireRm.setAttribute('marker-end', 'url(#arrow-amber)');
+        labelMiss.setAttribute('fill', '#f59e0b');
+
+        returnHit.setAttribute('opacity', '0.05');
+        labelHit.setAttribute('opacity', '0.2');
       }
     }
 
-    // Trigger Request Flow Animation
-    function triggerFlow() {
-      if (isRunning) return;
-      isRunning = true;
+    // Packet Motion Simulation
+    function simulatePacket() {
+      if (isBusy) return;
+      isBusy = true;
 
-      const bead = document.getElementById('energy-bead');
-      const boxPos = document.getElementById('box-pos');
-      const boxApp = document.getElementById('box-app');
-      const boxRedis = document.getElementById('box-redis');
-      const boxMysql = document.getElementById('box-mysql');
-      const statusDot = document.getElementById('status-dot');
-      const statusMsg = document.getElementById('status-msg');
-      const statusBadge = document.getElementById('status-badge');
+      const packet = document.getElementById('pulse-packet');
+      const haloPos = document.getElementById('halo-pos');
+      const haloBackend = document.getElementById('halo-backend');
+      const haloRedis = document.getElementById('halo-redis');
+      const haloMysql = document.getElementById('halo-mysql');
+      const narrative = document.getElementById('flow-narrative');
+      const light = document.getElementById('flow-indicator-light');
+      const valLatency = document.getElementById('val-latency');
+      const valDb = document.getElementById('val-db-load');
 
-      // Reset any active glow
-      [boxPos, boxApp, boxRedis, boxMysql].forEach(el => {
-        el.classList.remove('glow-emerald', 'glow-amber');
+      // Reset Halos
+      [haloPos, haloBackend, haloRedis, haloMysql].forEach(h => {
+        h.setAttribute('filter', '');
       });
 
-      statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
-      statusMsg.innerHTML = "Request dikirim dari Kasir POS...";
-      statusBadge.innerText = "PROCESSING";
-      statusBadge.className = "text-xs font-mono px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold";
+      light.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
+      narrative.innerHTML = "1. Transaksi dikirim dari Kasir POS menuju Backend...";
 
       const tl = gsap.timeline({
         onComplete: () => {
-          isRunning = false;
+          isBusy = false;
         }
       });
 
-      // Flow 1: Client -> Backend
-      tl.to(bead, { opacity: 1, duration: 0.1 });
-      tl.to(boxPos, { duration: 0.1, onStart: () => boxPos.classList.add('glow-emerald') });
-      tl.to(bead, { cx: 370, cy: 120, duration: 0.35, ease: "power2.inOut" });
+      // Stage 1: Launch Packet from POS
+      tl.set(packet, { cx: 130, cy: 240, opacity: 1, fill: '#10b981', filter: 'url(#glow-emerald)' });
+      tl.to(haloPos, { duration: 0.1, onStart: () => haloPos.setAttribute('stroke', '#10b981') });
 
-      // Flow 2: Backend received
-      tl.to(boxPos, { duration: 0.05, onComplete: () => boxPos.classList.remove('glow-emerald') });
-      tl.to(boxApp, { duration: 0.1, onStart: () => {
-        boxApp.classList.add('glow-emerald');
-        statusMsg.innerHTML = "Backend menerima request, mengecek Redis...";
+      // Stage 2: Move along Wire 1 to Backend (130 -> 420)
+      tl.to(packet, { cx: 420, cy: 240, duration: 0.4, ease: "power2.inOut" });
+      tl.to(haloPos, { duration: 0.05, onComplete: () => haloPos.setAttribute('stroke', '#334155') });
+      tl.to(haloBackend, { duration: 0.1, onStart: () => {
+        haloBackend.setAttribute('stroke', '#06b6d4');
+        narrative.innerHTML = "2. Backend menerima request. Memeriksa ketersediaan di Redis RAM...";
       }});
 
-      if (isRedisActive) {
-        // SCENARIO 1: REDIS CACHE HIT (Bouncing back immediately!)
-        tl.to(bead, { cx: 630, cy: 120, duration: 0.35, ease: "power2.inOut" });
-        tl.to(boxApp, { duration: 0.05, onComplete: () => boxApp.classList.remove('glow-emerald') });
-        tl.to(boxRedis, { duration: 0.1, onStart: () => {
-          boxRedis.classList.add('glow-emerald');
-          statusMsg.innerHTML = "<strong class='text-emerald-400'>CACHE HIT!</strong> Data ditemukan di RAM Redis!";
+      if (redisEnabled) {
+        // ================= SCENARIO A: CACHE HIT =================
+        // Curve packet from Backend (420,240) to Redis (730,140)
+        tl.to(packet, {
+          duration: 0.45,
+          ease: "power2.inOut",
+          cx: 730,
+          cy: 140,
+        });
+
+        tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
+        tl.to(haloRedis, { duration: 0.15, onStart: () => {
+          haloRedis.setAttribute('stroke', '#10b981');
+          haloRedis.setAttribute('filter', 'url(#glow-emerald)');
+          narrative.innerHTML = "<strong class='text-emerald-400'>⚡ CACHE HIT!</strong> Data ditemukan di RAM. Langsung dikembalikan tanpa query disk!";
         }});
 
-        // Instant return journey: Redis -> Backend -> POS
-        tl.to(bead, { cx: 370, cy: 120, duration: 0.3, ease: "power2.inOut" });
-        tl.to(boxRedis, { duration: 0.05, onComplete: () => boxRedis.classList.remove('glow-emerald') });
-        tl.to(bead, { cx: 120, cy: 120, duration: 0.3, ease: "power2.inOut" });
-        tl.to(boxPos, { duration: 0.1, onStart: () => boxPos.classList.add('glow-emerald') });
-        tl.to(bead, { opacity: 0, duration: 0.15 });
-        tl.to(boxPos, { duration: 0.2, onComplete: () => {
-          boxPos.classList.remove('glow-emerald');
-          updateMetrics(true);
+        // Instant return via overhead curve back to POS (730,140) -> (130,240)
+        tl.to(packet, {
+          duration: 0.5,
+          ease: "power2.out",
+          cx: 130,
+          cy: 240
+        });
+
+        tl.to(haloRedis, { duration: 0.1, onComplete: () => {
+          haloRedis.setAttribute('filter', '');
+          haloRedis.setAttribute('stroke', '#10b981');
+        }});
+
+        tl.to(haloPos, { duration: 0.15, onStart: () => haloPos.setAttribute('stroke', '#10b981') });
+        tl.to(packet, { opacity: 0, duration: 0.2 });
+        tl.to(haloPos, { duration: 0.2, onComplete: () => {
+          haloPos.setAttribute('stroke', '#334155');
+          light.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+          narrative.innerHTML = "Selesai dalam <strong class='text-emerald-400'>2.1 ms</strong>! Database MySQL 100% idle terlindungi.";
+          valLatency.innerText = "2.1 ms";
+          valLatency.className = "text-emerald-400 font-bold";
+          valDb.innerText = "0 IOPS (Idle)";
+          valDb.className = "text-emerald-400 font-bold";
         }});
 
       } else {
-        // SCENARIO 2: REDIS BYPASSED -> MUST HIT MYSQL DISK
-        tl.to(bead, { cx: 630, cy: 120, fill: "#f59e0b", duration: 0.3, ease: "power2.inOut" });
-        tl.to(boxApp, { duration: 0.05, onComplete: () => boxApp.classList.remove('glow-emerald') });
-        tl.to(boxRedis, { duration: 0.1, onStart: () => {
-          statusMsg.innerHTML = "<span class='text-amber-400'>CACHE MISS!</span> Terpaksa membaca disk database MySQL...";
+        // ================= SCENARIO B: CACHE MISS / BYPASS =================
+        // Curve to Redis first (detect bypass)
+        tl.to(packet, {
+          duration: 0.4,
+          ease: "power2.inOut",
+          cx: 730,
+          cy: 140,
+          fill: '#f59e0b',
+          filter: 'url(#glow-amber)'
+        });
+
+        tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
+        tl.to(haloRedis, { duration: 0.1, onStart: () => {
+          narrative.innerHTML = "<strong class='text-amber-400'>⚠️ CACHE MISS!</strong> Cache tidak aktif. Terpaksa dialirkan ke Database...";
         }});
 
-        // Continue to MySQL
-        tl.to(bead, { cx: 850, cy: 120, duration: 0.35, ease: "power2.inOut" });
-        tl.to(boxMysql, { duration: 0.1, onStart: () => {
-          boxMysql.style.opacity = "1";
-          boxMysql.classList.add('glow-amber');
-          statusMsg.innerHTML = "MySQL sedang membaca data dari Disk Storage (I/O Bottleneck)...";
+        // Fall down from Redis to MySQL along connector (730, 140) -> (730, 340)
+        tl.to(packet, {
+          duration: 0.4,
+          ease: "power2.inOut",
+          cx: 730,
+          cy: 340
+        });
+
+        tl.to(haloMysql, { duration: 0.2, onStart: () => {
+          haloMysql.setAttribute('stroke', '#f59e0b');
+          haloMysql.setAttribute('filter', 'url(#glow-amber)');
+          narrative.innerHTML = "3. <strong class='text-amber-400'>MySQL Disk Read:</strong> Menjalankan InnoDB Query &amp; membaca blok penyimpanan fisik...";
         }});
 
-        // Simulate DB Read delay
-        tl.to({}, { duration: 0.4 });
+        // Delay to represent Disk IO latency
+        tl.to({}, { duration: 0.5 });
 
-        // Return journey: MySQL -> POS
-        tl.to(bead, { cx: 370, cy: 120, duration: 0.45, ease: "power2.inOut" });
-        tl.to(boxMysql, { duration: 0.05, onComplete: () => {
-          boxMysql.classList.remove('glow-amber');
-          boxMysql.style.opacity = "0.6";
+        // Return from MySQL back to POS along bottom curve (730,340) -> (130,240)
+        tl.to(packet, {
+          duration: 0.6,
+          ease: "power2.out",
+          cx: 130,
+          cy: 240
+        });
+
+        tl.to(haloMysql, { duration: 0.1, onComplete: () => {
+          haloMysql.setAttribute('filter', '');
+          haloMysql.setAttribute('stroke', '#334155');
         }});
-        tl.to(bead, { cx: 120, cy: 120, duration: 0.35, ease: "power2.inOut" });
-        tl.to(boxPos, { duration: 0.1, onStart: () => boxPos.classList.add('glow-amber') });
-        tl.to(bead, { opacity: 0, duration: 0.15 });
-        tl.to(boxPos, { duration: 0.2, onComplete: () => {
-          boxPos.classList.remove('glow-amber');
-          bead.setAttribute('fill', '#10b981');
-          updateMetrics(false);
+
+        tl.to(haloPos, { duration: 0.15, onStart: () => haloPos.setAttribute('stroke', '#f59e0b') });
+        tl.to(packet, { opacity: 0, duration: 0.2 });
+        tl.to(haloPos, { duration: 0.2, onComplete: () => {
+          haloPos.setAttribute('stroke', '#334155');
+          light.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+          narrative.innerHTML = "Selesai dalam <strong class='text-amber-400'>138.4 ms</strong> (Lambat karena harus membaca disk database MySQL).";
+          valLatency.innerText = "138.4 ms";
+          valLatency.className = "text-amber-400 font-bold";
+          valDb.innerText = "1-2 Disk Reads";
+          valDb.className = "text-amber-400 font-bold";
         }});
       }
     }
 
-    // Update Result Stats
-    function updateMetrics(isHit) {
-      const latVal = document.getElementById('stat-latency');
-      const latDesc = document.getElementById('stat-latency-desc');
-      const dbTitle = document.getElementById('stat-db-title');
-      const dbDesc = document.getElementById('stat-db-desc');
-      const dbIcon = document.getElementById('stat-db-icon');
-      const statusDot = document.getElementById('status-dot');
-      const statusMsg = document.getElementById('status-msg');
-      const statusBadge = document.getElementById('status-badge');
-
-      if (isHit) {
-        latVal.innerText = "2.1";
-        latVal.className = "text-3xl font-mono font-bold text-emerald-400";
-        latDesc.className = "text-[11px] font-mono text-emerald-400/90 mt-1";
-        latDesc.innerText = "⚡ Instan (Langsung diambil dari RAM)";
-
-        dbTitle.innerText = "0 Beban Disk";
-        dbTitle.className = "text-xl sm:text-2xl font-mono font-bold text-white";
-        dbDesc.innerText = "Database aman dan terlindungi dari query berat";
-        dbIcon.innerHTML = `<i data-lucide="shield-check" class="w-6 h-6 text-emerald-400"></i>`;
-
-        statusDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
-        statusMsg.innerHTML = "Selesai dalam <strong class='text-emerald-400'>2.1 ms</strong>! Database 100% dilewati.";
-        statusBadge.innerText = "CACHE HIT (2.1ms)";
-        statusBadge.className = "text-xs font-mono px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold";
-      } else {
-        latVal.innerText = "138.4";
-        latVal.className = "text-3xl font-mono font-bold text-amber-400";
-        latDesc.className = "text-[11px] font-mono text-amber-400/90 mt-1";
-        latDesc.innerText = "🐢 Lambat (Terbebani I/O Disk Storage)";
-
-        dbTitle.innerText = "1 Query Disk";
-        dbTitle.className = "text-xl sm:text-2xl font-mono font-bold text-amber-400";
-        dbDesc.innerText = "Storage IOPS bertambah karena query langsung ke MySQL";
-        dbIcon.innerHTML = `<i data-lucide="alert-triangle" class="w-6 h-6 text-amber-400"></i>`;
-
-        statusDot.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
-        statusMsg.innerHTML = "Selesai dalam <strong class='text-amber-400'>138.4 ms</strong> (Lambat karena harus membaca disk database).";
-        statusBadge.innerText = "CACHE MISS (138ms)";
-        statusBadge.className = "text-xs font-mono px-3 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold";
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    // Keyboard spacebar shortcut
+    // Spacebar trigger
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space' && e.target === document.body) {
         e.preventDefault();
-        triggerFlow();
+        simulatePacket();
       }
     });
   </script>
