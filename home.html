@@ -8,21 +8,6 @@
   <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
   <link rel="shortcut icon" href="assets/img/logo-1.png" type="image/x-icon">
 
-  <!-- Immediate Theme Initialization (Prevents FOUT) -->
-  <script>
-    (function() {
-      const savedTheme = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (savedTheme === 'light' || (!savedTheme && !prefersDark)) {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      } else {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      }
-    })();
-  </script>
-
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,48 +44,6 @@
   <script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
 
   <style>
-    :root {
-      --bg-page: #f8fafc;
-      --bg-card: rgba(255, 255, 255, 0.9);
-      --bg-card-solid: #ffffff;
-      --border-card: #e2e8f0;
-      --border-subtle: #f1f5f9;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
-      --nav-bg: rgba(248, 250, 252, 0.85);
-      --nav-pill-bg: rgba(15, 23, 42, 0.04);
-      --stat-bg: rgba(255, 255, 255, 0.9);
-      --grid-line: rgba(15, 23, 42, 0.04);
-      --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-      --card-shadow-hover: 0 16px 36px -6px rgba(16, 185, 129, 0.16);
-      --ambient-opacity: 0.35;
-    }
-
-    html.dark {
-      --bg-page: #060709;
-      --bg-card: rgba(14, 17, 23, 0.75);
-      --bg-card-solid: #0e1117;
-      --border-card: rgba(255, 255, 255, 0.08);
-      --border-subtle: rgba(255, 255, 255, 0.05);
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --nav-bg: rgba(6, 7, 9, 0.85);
-      --nav-pill-bg: rgba(255, 255, 255, 0.03);
-      --stat-bg: rgba(255, 255, 255, 0.02);
-      --grid-line: rgba(255, 255, 255, 0.03);
-      --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-      --card-shadow-hover: 0 14px 34px -10px rgba(16, 185, 129, 0.22);
-      --ambient-opacity: 0.6;
-    }
-
-    body {
-      background-color: var(--bg-page);
-      color: var(--text-primary);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
     ::selection {
       background: rgba(16, 185, 129, 0.35);
       color: #ffffff;
@@ -125,22 +68,18 @@
     .bg-grid-pattern {
       background-size: 40px 40px;
       background-image: 
-        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-    }
-    .ambient-glow {
-      opacity: var(--ambient-opacity);
-      transition: opacity 0.3s ease;
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
     /* Interactive Spotlight Card (Theodorus Clarence Emerald Glow) */
     .glow-card {
       position: relative;
-      background: var(--bg-card);
+      background: rgba(14, 17, 23, 0.75);
       backdrop-filter: blur(14px);
-      border: 1px solid var(--border-card);
-      box-shadow: var(--card-shadow);
-      transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background-color 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
       overflow: hidden;
     }
     .glow-card::before {
@@ -156,7 +95,7 @@
     .glow-card:hover {
       border-color: rgba(16, 185, 129, 0.45);
       transform: translateY(-2px);
-      box-shadow: var(--card-shadow-hover);
+      box-shadow: 0 14px 34px -10px rgba(16, 185, 129, 0.22);
     }
     .glow-card:hover::before {
       opacity: 1;
@@ -167,139 +106,6 @@
       background: rgba(10, 12, 16, 0.95);
       border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(16, 185, 129, 0.1);
-    }
-
-    /* Theme Toggle Icons */
-    html.dark .theme-icon-sun { display: block; }
-    html.dark .theme-icon-moon { display: none; }
-    html:not(.dark) .theme-icon-sun { display: none; }
-    html:not(.dark) .theme-icon-moon { display: block; }
-
-    /* Light Theme Typography & Component Overrides */
-    html:not(.dark) h1, 
-    html:not(.dark) h2, 
-    html:not(.dark) h3,
-    html:not(.dark) .theme-heading {
-      color: #0f172a !important;
-    }
-    html:not(.dark) p,
-    html:not(.dark) .theme-subtext {
-      color: #334155 !important;
-    }
-    html:not(.dark) .text-indigo-400 {
-      color: #059669 !important;
-    }
-    html:not(.dark) .text-emerald-400 {
-      color: #059669 !important;
-    }
-    html:not(.dark) .text-cyan-400 {
-      color: #0d9488 !important;
-    }
-    html:not(.dark) .text-slate-400 {
-      color: #475569 !important;
-    }
-    html:not(.dark) .text-slate-500 {
-      color: #64748b !important;
-    }
-    html:not(.dark) .glow-card {
-      background-color: rgba(255, 255, 255, 0.95) !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 1px 3px 0 rgba(15, 23, 42, 0.04) !important;
-    }
-    html:not(.dark) .glow-card:hover {
-      border-color: #10b981 !important;
-      box-shadow: 0 14px 34px -10px rgba(16, 185, 129, 0.18) !important;
-    }
-    html:not(.dark) .glow-card .text-white {
-      color: #0f172a !important;
-    }
-    html:not(.dark) .glow-card p {
-      color: #1e293b !important;
-      font-weight: 450 !important;
-    }
-    html:not(.dark) section > div > p {
-      color: #334155 !important;
-    }
-    html:not(.dark) .glow-card .text-slate-400 {
-      color: #475569 !important;
-    }
-    html:not(.dark) .glow-card .text-slate-300 {
-      color: #1e293b !important;
-    }
-    html:not(.dark) .glow-card .border-t,
-    html:not(.dark) .glow-card .border-white\/\[0\.06\],
-    html:not(.dark) .glow-card .border-white\/\[0\.08\] {
-      border-color: #e2e8f0 !important;
-    }
-    html:not(.dark) .glow-card a.text-indigo-400,
-    html:not(.dark) .glow-card a.text-emerald-400,
-    html:not(.dark) .glow-card a.text-cyan-400 {
-      color: #059669 !important;
-      font-weight: 600 !important;
-    }
-    html:not(.dark) .glow-card a:hover {
-      color: #047857 !important;
-    }
-    html:not(.dark) .glow-card span.bg-white\/\[0\.04\],
-    html:not(.dark) .glow-card span.bg-white\/\[0\.03\] {
-      background-color: #f1f5f9 !important;
-      border-color: #cbd5e1 !important;
-      color: #334155 !important;
-    }
-    html:not(.dark) .theme-stat-box {
-      background-color: #ffffff !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05) !important;
-    }
-    html:not(.dark) .theme-stat-label {
-      color: #475569 !important;
-    }
-    html:not(.dark) .theme-btn-secondary {
-      background-color: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      color: #0f172a !important;
-    }
-    html:not(.dark) .theme-btn-secondary:hover {
-      background-color: #f8fafc !important;
-      border-color: #10b981 !important;
-      color: #059669 !important;
-    }
-    html:not(.dark) .theme-btn-primary {
-      background-color: #0f172a !important;
-      color: #ffffff !important;
-    }
-    html:not(.dark) .theme-btn-primary:hover {
-      background-color: #1e293b !important;
-    }
-    html:not(.dark) .theme-header {
-      background-color: rgba(248, 250, 252, 0.88) !important;
-      border-color: #e2e8f0 !important;
-    }
-    html:not(.dark) .theme-nav-pill {
-      background-color: rgba(15, 23, 42, 0.05) !important;
-      border-color: #cbd5e1 !important;
-    }
-    html:not(.dark) footer {
-      border-color: #e2e8f0 !important;
-    }
-    html:not(.dark) footer .border-t {
-      border-color: #e2e8f0 !important;
-    }
-    html:not(.dark) footer a.border-white\/10 {
-      background-color: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      color: #0f172a !important;
-    }
-    html:not(.dark) footer a.border-white\/10:hover {
-      background-color: #f8fafc !important;
-      border-color: #10b981 !important;
-      color: #059669 !important;
-    }
-    html:not(.dark) footer a.border-white\/10 svg {
-      color: #0f172a !important;
-    }
-    html:not(.dark) footer .text-slate-500 {
-      color: #64748b !important;
     }
 
     /* Pulsing status beacon */
@@ -313,10 +119,10 @@
   </style>
 </head>
 
-<body class="bg-[var(--bg-page)] text-[var(--text-primary)] font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200 overflow-x-hidden min-h-screen transition-colors duration-300">
+<body class="bg-[#060709] text-slate-100 font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200 overflow-x-hidden min-h-screen">
 
   <!-- Ambient Emerald & Teal Orbs (Theodorus Clarence Style) -->
-  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden ambient-glow">
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-60">
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-tr from-emerald-600/20 via-teal-600/15 to-transparent blur-[120px] rounded-full"></div>
     <div class="absolute top-[40%] -left-32 w-[500px] h-[400px] bg-emerald-600/10 blur-[130px] rounded-full"></div>
     <div class="absolute top-[70%] -right-32 w-[550px] h-[450px] bg-teal-600/10 blur-[140px] rounded-full"></div>
@@ -324,7 +130,7 @@
   </div>
 
   <!-- Header / Navigation -->
-  <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-[var(--nav-bg)] border-b border-[var(--border-card)] theme-header">
+  <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-[#060709]/80 border-b border-white/[0.06]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
       <!-- Brand Logo / Identity -->
@@ -333,35 +139,28 @@
           <img src="assets/img/logo.svg" alt="Fauzy Backend Logo" class="w-full h-full object-contain">
         </div>
         <div class="flex flex-col">
-          <span class="text-sm font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-1.5 theme-heading">
-            madfauzy<span class="text-emerald-500 dark:text-emerald-400 font-mono">.com</span>
+          <span class="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
+            madfauzy<span class="text-emerald-400 font-mono">.com</span>
           </span>
-          <span class="text-[10px] text-[var(--text-muted)] font-mono">backend.sys // wib</span>
+          <span class="text-[10px] text-slate-500 font-mono">backend.sys // wib</span>
         </div>
       </a>
 
       <!-- Desktop / Tablet Nav -->
-      <nav id="desktop-nav" class="hidden md:flex items-center gap-1 bg-[var(--nav-pill-bg)] border border-[var(--border-card)] p-1 rounded-full text-xs font-medium text-[var(--text-secondary)] theme-nav-pill">
-        <a href="#hero" data-target="hero" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 font-medium">~/home</a>
-        <a href="#architecture" data-target="architecture" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">/architecture</a>
-        <a href="#stack" data-target="stack" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">/stack</a>
-        <a href="#projects" data-target="projects" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">/projects</a>
-        <a href="#experience" data-target="experience" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-black/[0.04] dark:hover:bg-white/[0.04]">/experience</a>
+      <nav id="desktop-nav" class="hidden md:flex items-center gap-1 bg-white/[0.03] border border-white/[0.08] p-1 rounded-full text-xs font-medium text-slate-400">
+        <a href="#hero" data-target="hero" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-medium">~/home</a>
+        <a href="#architecture" data-target="architecture" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/architecture</a>
+        <a href="#stack" data-target="stack" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/stack</a>
+        <a href="#projects" data-target="projects" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/projects</a>
+        <a href="#experience" data-target="experience" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/experience</a>
       </nav>
 
       <!-- Right CTAs -->
       <div class="flex items-center gap-2">
-        
-        <!-- Theme Toggle Button -->
-        <button id="theme-toggle" type="button" aria-label="Toggle Theme" title="Toggle Theme (Light / Dark)" class="w-9 h-9 rounded-lg border border-[var(--border-card)] bg-[var(--stat-bg)] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer">
-          <i data-lucide="sun" class="w-4 h-4 text-amber-500 theme-icon-sun"></i>
-          <i data-lucide="moon" class="w-4 h-4 text-emerald-600 theme-icon-moon"></i>
-        </button>
-
-        <a href="https://github.com/madfauzy" target="_blank" rel="noreferrer" title="GitHub" class="w-9 h-9 rounded-lg border border-[var(--border-card)] bg-[var(--stat-bg)] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all">
+        <a href="https://github.com/madfauzy" target="_blank" rel="noreferrer" title="GitHub" class="w-9 h-9 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.08] flex items-center justify-center text-slate-400 hover:text-white transition-all">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         </a>
-        <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noreferrer" title="LinkedIn" class="w-9 h-9 rounded-lg border border-[var(--border-card)] bg-[var(--stat-bg)] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all">
+        <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noreferrer" title="LinkedIn" class="w-9 h-9 rounded-lg border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.08] flex items-center justify-center text-slate-400 hover:text-white transition-all">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
         </a>
         <a href="mailto:madfauzy28@gmail.com" class="hidden sm:inline-flex items-center gap-2 text-xs font-medium px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 transition-all">
@@ -1060,9 +859,9 @@
         navLinks.forEach(link => {
           const target = link.getAttribute('data-target');
           if (target === activeId) {
-            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 font-medium shadow-xs';
+            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-medium shadow-xs';
           } else {
-            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.04]';
+            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]';
           }
         });
       }
@@ -1094,26 +893,7 @@
         });
       });
 
-      // 6. Theme Toggle Logic (Light / Dark mode persistence)
-      const themeToggleBtn = document.getElementById('theme-toggle');
-      if (themeToggleBtn) {
-        themeToggleBtn.addEventListener('click', () => {
-          const isDark = document.documentElement.classList.contains('dark');
-          if (isDark) {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-            localStorage.setItem('theme', 'light');
-          } else {
-            document.documentElement.classList.remove('light');
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-          }
-          if (window.lucide) {
-            lucide.createIcons();
-          }
-          updateActiveNav(currentActiveSection);
-        });
-      }
+      try { localStorage.removeItem('theme'); } catch(e) {}
 
     });
   </script>
