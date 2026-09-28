@@ -932,12 +932,12 @@
   <!-- ========================================================================= -->
   <!-- SPA VIEW: ENGINEERING LABS & SYSTEMS ARCHITECTURE (LAB 01 & LAB 02)       -->
   <!-- ========================================================================= -->
-  <div id="view-labs" class="hidden min-h-screen bg-[#060709] text-slate-200 font-sans antialiased blueprint-grid flex-col justify-between selection:bg-emerald-500/30 selection:text-white overflow-x-hidden lg:overflow-hidden z-20 relative">
+  <div id="view-labs" class="hidden min-h-screen bg-[#060709] text-slate-200 font-sans antialiased blueprint-grid flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white overflow-x-hidden overflow-y-auto z-20 relative">
 <!-- NAVBAR -->
   <header class="border-b border-white/[0.06] bg-[#060709]/80 backdrop-blur-md sticky top-0 z-50 shrink-0">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <!-- Official Unified Vector Brand Logo -->
-      <a href="/" class="flex items-center gap-2 group">
+      <a href="/" class="flex items-center gap-2 group shrink-0">
         <div class="w-6 h-6 flex items-center justify-center transition-transform group-hover:scale-110">
           <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M 43 14 C 27 14 23 27 23 39 C 23 46 15 48 11 50 C 15 52 23 54 23 61 C 23 73 27 86 43 86" 
@@ -960,16 +960,17 @@
         <span id="nav-lab-title" class="text-slate-300 font-medium">Engineering Labs Hub</span>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
         <!-- Back to Hub button (visible when inside a lab) -->
         <button id="btn-back-hub" onclick="switchLab('hub')" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all cursor-pointer">
-          <i data-lucide="layout-grid" class="w-3 h-3"></i>
-          <span>Pilih Lab Lain</span>
+          <i data-lucide="layout-grid" class="w-3.5 h-3.5 shrink-0"></i>
+          <span class="hidden sm:inline">Pilih Lab Lain</span>
+          <span class="sm:hidden text-[10px]">Pilih Lab</span>
         </button>
 
-        <a href="/" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
-          <i data-lucide="arrow-left" class="w-3 h-3"></i>
-          <span>Portfolio</span>
+        <a href="/" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all shrink-0">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5 shrink-0"></i>
+          <span class="hidden sm:inline">Portfolio</span>
         </a>
       </div>
     </div>
@@ -978,50 +979,50 @@
   <!-- ========================================================================= -->
   <!-- VIEW 1: LABS SELECTOR HUB (Default Landing Screen)                        -->
   <!-- ========================================================================= -->
-  <main id="view-hub" class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-center min-h-0">
+  <main id="view-hub" class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 my-auto flex-1 flex flex-col justify-center min-h-0">
     
     <!-- Hub Header -->
-    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+    <div class="text-center max-w-2xl mx-auto mb-6 sm:mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2.5">
         <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
         <span>Backend Engineering Labs</span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+      <h1 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white mb-2">
         Pilih Simulasi Sistem
       </h1>
-      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mx-auto">
+      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mx-auto px-2">
         Visualisasi interaktif arsitektur backend, distributed caching, dan diagram concurrency performa tinggi. Pilih simulasi yang ingin kamu eksplorasi:
       </p>
     </div>
 
     <!-- 2 Lab Selection Cards -->
-    <div class="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-4xl mx-auto w-full">
       
       <!-- CARD 1: REQUEST LIFECYCLE & CACHE FLOW -->
-      <div onclick="switchLab('cache-flow')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-emerald-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1">
+      <div onclick="switchLab('cache-flow')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-emerald-500/50 rounded-2xl p-5 sm:p-6 md:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1">
         
         <div>
           <!-- Top Badge & Icon -->
-          <div class="flex items-center justify-between gap-3 mb-5">
+          <div class="flex items-center justify-between gap-3 mb-4 sm:mb-5">
             <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
               LAB 01 • ARCHITECTURE
             </span>
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="network" class="w-5 h-5"></i>
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="network" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             </div>
           </div>
 
           <!-- Title & Description -->
-          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+          <h2 class="text-base sm:text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
             Request Lifecycle &amp; Cache Flow
           </h2>
-          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+          <p class="text-xs text-slate-400 leading-relaxed mb-5 sm:mb-6 font-sans">
             Simulasi diagram alur Kasir POS melintasi Backend Core, Redis RAM In-Memory, hingga proteksi beban I/O database MySQL Aurora RDS.
           </p>
         </div>
 
         <!-- Metrics Preview Pill -->
-        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+        <div class="pt-3.5 sm:pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
           <div class="flex items-center gap-2 text-slate-400">
             <span class="text-emerald-400 font-bold">2.1 ms</span>
             <span>vs</span>
@@ -1036,34 +1037,34 @@
       </div>
 
       <!-- CARD 2: GOLANG CONCURRENCY & WORKER POOL FLOW -->
-      <div onclick="switchLab('concurrency-race')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:-translate-y-1">
+      <div onclick="switchLab('concurrency-race')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-5 sm:p-6 md:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:-translate-y-1">
         
         <div>
           <!-- Top Badge & Icon -->
-          <div class="flex items-center justify-between gap-3 mb-5">
+          <div class="flex items-center justify-between gap-3 mb-4 sm:mb-5">
             <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
               LAB 02 • CONCURRENCY
             </span>
-            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="zap" class="w-5 h-5"></i>
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="w-4 h-4 sm:w-5 sm:h-5"></i>
             </div>
           </div>
 
           <!-- Title & Description -->
-          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+          <h2 class="text-base sm:text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
             Golang Concurrency &amp; Worker Pool
           </h2>
-          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+          <p class="text-xs text-slate-400 leading-relaxed mb-5 sm:mb-6 font-sans">
             Diagram arsitektur Fan-Out / Fan-In: bagaimana Go Channel mendistribusikan ribuan antrian tugas ke 4 Goroutines paralel secara simultan.
           </p>
         </div>
 
         <!-- Metrics Preview Pill -->
-        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+        <div class="pt-3.5 sm:pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
           <div class="flex items-center gap-2 text-slate-400">
-            <span class="text-cyan-400 font-bold">17.0x Faster</span>
-            <span>•</span>
-            <span class="text-slate-400">Fan-Out / Fan-In</span>
+            <span class="text-cyan-400 font-bold">4 Goroutines</span>
+            <span>vs</span>
+            <span class="text-amber-400 font-bold">1 Thread</span>
           </div>
           <span class="flex items-center gap-1.5 text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">
             <span>Buka Diagram</span>
@@ -1080,31 +1081,31 @@
   <!-- ========================================================================= -->
   <!-- VIEW 2: LAB 01 - REQUEST LIFECYCLE & CACHE FLOW (Compact 1-Screen)        -->
   <!-- ========================================================================= -->
-  <main id="view-cache-flow" class="hidden max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
+  <main id="view-cache-flow" class="hidden max-w-5xl w-full mx-auto px-3 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
 
     <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between overflow-hidden my-auto w-full">
       
       <!-- SUBTLE COMPACT CONTROLS BAR -->
-      <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
+      <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/[0.06] shrink-0 font-mono">
         
         <!-- Left: Route Eyebrow -->
-        <div class="flex items-center gap-2 text-xs">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-white font-semibold">/cache-aside-flow</span>
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs truncate min-w-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+          <span class="text-white font-semibold truncate">/cache-aside-flow</span>
           <span class="text-slate-600 hidden sm:inline">•</span>
-          <span class="text-slate-500 text-[11px] hidden sm:inline">Kasir POS ➔ Go/Laravel ➔ Redis RAM / MySQL</span>
+          <span class="text-slate-500 text-[11px] hidden md:inline truncate">Kasir POS ➔ Go/Laravel ➔ Redis RAM / MySQL</span>
         </div>
 
         <!-- Right: Action Controls -->
-        <div class="flex items-center gap-2">
-          <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
             <span id="cache-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Redis:</span>
+            <span class="hidden xs:inline">Redis:</span>
             <strong id="cache-status-text" class="text-emerald-400 font-bold">AKTIF</strong>
           </button>
 
-          <button id="btn-fire" onclick="simulatePacket()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 transition-all cursor-pointer">
-            <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+          <button id="btn-fire" onclick="simulatePacket()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3 h-3 fill-current shrink-0"></i>
             <span>Simulasikan</span>
             <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
           </button>
@@ -1113,9 +1114,9 @@
       </div>
 
       <!-- MIDDLE: HERO SVG DIAGRAM -->
-      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden my-auto">
+      <div class="relative w-full flex-1 flex flex-col items-center justify-center min-h-[220px] sm:min-h-0 py-1 overflow-x-auto overflow-y-hidden my-auto">
         
-        <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-auto max-h-[50vh] sm:max-h-[54vh] object-contain my-auto">
+        <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-auto min-w-[520px] sm:min-w-0 max-h-[48vh] sm:max-h-[54vh] object-contain my-auto">
           <defs>
             <filter id="glow-emerald" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
@@ -1253,20 +1254,20 @@
       </div>
 
       <!-- BOTTOM ROW: REFINED TELEMETRY -->
-      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
-        <div class="flex items-center gap-2">
+      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 font-mono text-[11px] shrink-0">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
           <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="flow-indicator-light"></span>
-          <span id="flow-narrative" class="text-slate-400">
+          <span id="flow-narrative" class="text-slate-400 text-xs sm:text-[11px] truncate sm:whitespace-normal">
             Sistem Standby. Tekan <strong>"Simulasikan"</strong> untuk melihat pergerakan request.
           </span>
         </div>
 
-        <div class="flex items-center gap-2 shrink-0">
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
             <span class="text-slate-500">Latency:</span>
             <strong id="val-latency" class="text-emerald-400 font-bold text-xs">2.1 ms</strong>
           </div>
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+          <div class="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
             <span class="text-slate-500">DB Disk:</span>
             <strong id="val-db-load" class="text-emerald-400 font-bold text-xs">0 IOPS (Idle)</strong>
           </div>
@@ -1280,33 +1281,33 @@
   <!-- ========================================================================= -->
   <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY & WORKER POOL ARCHITECTURE DIAGRAM   -->
   <!-- ========================================================================= -->
-  <main id="view-concurrency-race" class="hidden max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
+  <main id="view-concurrency-race" class="hidden max-w-5xl w-full mx-auto px-3 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
 
     <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between overflow-hidden my-auto w-full">
       
       <!-- SUBTLE COMPACT CONTROLS BAR -->
-      <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
+      <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/[0.06] shrink-0 font-mono">
         
         <!-- Left: Route Info -->
-        <div class="flex items-center gap-2 text-xs">
-          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span class="text-white font-semibold">/fan-out-worker-pool</span>
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs truncate min-w-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0"></span>
+          <span class="text-white font-semibold truncate">/fan-out-worker-pool</span>
           <span class="text-slate-600 hidden sm:inline">•</span>
-          <span class="text-slate-500 text-[11px] hidden sm:inline">Channel Queue ➔ 4 Goroutines ➔ WaitGroup</span>
+          <span class="text-slate-500 text-[11px] hidden md:inline truncate">Channel Queue ➔ 4 Goroutines ➔ WaitGroup</span>
         </div>
 
         <!-- Right: Action Controls -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <!-- Mode Toggle: Concurrency vs Sequential -->
-          <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
+          <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
             <span id="mode-indicator-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span>Eksekusi:</span>
+            <span class="hidden xs:inline">Eksekusi:</span>
             <strong id="mode-status-text" class="text-cyan-400 font-bold">GOLANG (Paralel)</strong>
           </button>
 
           <!-- Primary Action: Run Simulation -->
-          <button id="btn-fire-concurrency" onclick="simulateConcurrencyDiagram()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
-            <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+          <button id="btn-fire-concurrency" onclick="simulateConcurrencyDiagram()" class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3 h-3 fill-current shrink-0"></i>
             <span>Simulasikan</span>
             <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
           </button>
@@ -1316,9 +1317,9 @@
       </div>
 
       <!-- MIDDLE: HERO CONCURRENCY SVG DIAGRAM (FAN-OUT / FAN-IN) -->
-      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden my-auto">
+      <div class="relative w-full flex-1 flex flex-col items-center justify-center min-h-[220px] sm:min-h-0 py-1 overflow-x-auto overflow-y-hidden my-auto">
         
-        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-auto max-h-[50vh] sm:max-h-[54vh] object-contain my-auto">
+        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-auto min-w-[520px] sm:min-w-0 max-h-[48vh] sm:max-h-[54vh] object-contain my-auto">
           <defs>
             <filter id="glow-cyan" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
@@ -1522,21 +1523,21 @@
       </div>
 
       <!-- BOTTOM ROW: REFINED TELEMETRY BAR -->
-      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
+      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 font-mono text-[11px] shrink-0">
         
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
           <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0" id="c-indicator-light"></span>
-          <span id="c-flow-narrative" class="text-slate-400">
+          <span id="c-flow-narrative" class="text-slate-400 text-xs sm:text-[11px] truncate sm:whitespace-normal">
             Sistem Standby. Tekan <strong>"Simulasikan"</strong> untuk melihat pergerakan concurrency.
           </span>
         </div>
 
-        <div class="flex items-center gap-2 shrink-0">
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
             <span class="text-slate-500">Latency:</span>
             <strong id="val-c-latency" class="text-cyan-400 font-bold text-xs">0.18s</strong>
           </div>
-          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+          <div class="flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
             <span class="text-slate-500">Throughput:</span>
             <strong id="val-c-throughput" class="text-emerald-400 font-bold text-xs">5,400 tasks/s</strong>
           </div>
@@ -1970,6 +1971,24 @@
       const viewRace = document.getElementById('view-concurrency-race');
       const btnBackHub = document.getElementById('btn-back-hub');
       const navLabTitle = document.getElementById('nav-lab-title');
+      const labsContainer = document.getElementById('view-labs');
+
+      // Scroll management: Hub is ALWAYS scrollable so all cards and footer are accessible
+      if (targetLab === 'hub') {
+        labsContainer.classList.remove('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
+        labsContainer.classList.add('overflow-y-auto');
+      } else {
+        // Diagram views: Lock to 1-screen cockpit only on large desktop viewports
+        if (window.innerWidth >= 1024 && window.innerHeight >= 700) {
+          labsContainer.classList.add('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
+          labsContainer.classList.remove('overflow-y-auto');
+        } else {
+          labsContainer.classList.remove('lg:overflow-hidden', 'lg:h-screen', 'lg:max-h-screen');
+          labsContainer.classList.add('overflow-y-auto');
+        }
+      }
+      labsContainer.scrollTop = 0;
+      window.scrollTo(0, 0);
 
       // Hide all
       [viewHub, viewCache, viewRace].forEach(v => {
