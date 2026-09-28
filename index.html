@@ -1097,6 +1097,12 @@
 
         <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
+          <!-- Sound FX Toggle -->
+          <button onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-all cursor-pointer" title="Toggle Sound FX">
+            <span class="sfx-toggle-icon text-xs">🔊</span>
+            <span class="sfx-toggle-label hidden sm:inline text-[10px]">SFX: ON</span>
+          </button>
+
           <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
             <span id="cache-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Redis:</span>
@@ -1297,6 +1303,11 @@
 
         <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
+          <!-- Sound FX Toggle -->
+          <button onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-all cursor-pointer" title="Toggle Sound FX">
+            <span class="sfx-toggle-icon text-xs">🔊</span>
+            <span class="sfx-toggle-label hidden sm:inline text-[10px]">SFX: ON</span>
+          </button>
           
           <!-- Mode Toggle: Concurrency vs Sequential -->
           <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
@@ -1756,8 +1767,204 @@
     let isBusyPacket = false;
     let isBusyConcurrency = false;
 
+    // =========================================================================
+    // NATIVE PROCEDURAL SOUND ENGINE (Web Audio API - Zero External Files)
+    // =========================================================================
+    class ProceduralAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = localStorage.getItem('labs_sfx') !== 'false';
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) this.ctx = new AudioContextClass();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      toggle() {
+        this.enabled = !this.enabled;
+        localStorage.setItem('labs_sfx', this.enabled);
+        this.updateUI();
+        if (this.enabled) this.playClick();
+      }
+
+      updateUI() {
+        const icons = document.querySelectorAll('.sfx-toggle-icon');
+        const labels = document.querySelectorAll('.sfx-toggle-label');
+        icons.forEach(el => { el.textContent = this.enabled ? '🔊' : '🔇'; });
+        labels.forEach(el => { el.textContent = this.enabled ? 'SFX: ON' : 'SFX: OFF'; });
+      }
+
+      playClick() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(900, now + 0.04);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      }
+
+      playLaunch() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(540, now + 0.16);
+        gain.gain.setValueAtTime(0.02, now);
+        gain.gain.linearRampToValueAtTime(0.12, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+
+      playNodeHit(freq = 440) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.4, now + 0.07);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      }
+
+      playCacheHit() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [880, 1760].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + idx * 0.04;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+        });
+      }
+
+      playDbDisk() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(55, now + 0.28);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(360, now);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      }
+
+      playFanOut() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const chord = [330, 440, 554, 659];
+        chord.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + idx * 0.03;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.12);
+        });
+      }
+
+      playSingleTick(step = 1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200 + step * 35, now);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.09);
+      }
+
+      playDone() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const chord = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+        chord.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + idx * 0.04;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.09, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.4);
+        });
+      }
+    }
+
+    const sfx = new ProceduralAudioEngine();
+    function toggleAudioSFX() {
+      sfx.toggle();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
+      sfx.updateUI();
       handleHashRoute();
     });
 
@@ -1779,6 +1986,7 @@
     function switchLab(targetLab, updateHash = true) {
       if (currentLab === targetLab) return;
       currentLab = targetLab;
+      sfx.playClick();
 
       if (updateHash) {
         if (targetLab === 'hub') {
@@ -1842,6 +2050,7 @@
     function toggleRedisCache() {
       if (isBusyPacket) return;
       redisEnabled = !redisEnabled;
+      sfx.playClick();
 
       const btn = document.getElementById('btn-toggle-redis');
       const dot = document.getElementById('cache-indicator-dot');
@@ -1896,6 +2105,7 @@
     function simulatePacket() {
       if (isBusyPacket) return;
       isBusyPacket = true;
+      sfx.playLaunch();
 
       const energyGroup = document.getElementById('energy-group');
       const head = document.getElementById('packet-head');
@@ -1936,6 +2146,7 @@
       tl.to(haloPos, { duration: 0.1, onStart: () => {
         haloPos.setAttribute('stroke', '#10b981');
         pulseRipple('pos', '#10b981');
+        sfx.playNodeHit(440);
       }});
 
       tl.to(energyGroup, {
@@ -1954,6 +2165,7 @@
       tl.to(haloBackend, { duration: 0.1, onStart: () => {
         haloBackend.setAttribute('stroke', '#06b6d4');
         pulseRipple('backend', '#06b6d4');
+        sfx.playNodeHit(520);
         narrative.innerHTML = "2. Backend menerima request. Menelusuri ketersediaan di Redis RAM...";
       }});
 
@@ -1975,6 +2187,7 @@
           haloRedis.setAttribute('stroke', '#10b981');
           haloRedis.setAttribute('filter', 'url(#glow-emerald)');
           pulseRipple('redis', '#10b981');
+          sfx.playCacheHit();
           narrative.innerHTML = "<strong class='text-emerald-400'>⚡ CACHE HIT!</strong> Data ditemukan di RAM. Langsung kembali lewat Fast Path!";
         }});
 
@@ -1997,6 +2210,7 @@
         tl.to(haloPos, { duration: 0.15, onStart: () => {
           haloPos.setAttribute('stroke', '#10b981');
           pulseRipple('pos', '#10b981');
+          sfx.playDone();
         }});
 
         tl.to(energyGroup, { opacity: 0, duration: 0.25 });
@@ -2034,6 +2248,7 @@
 
         tl.to(haloRedis, { duration: 0.15, onStart: () => {
           pulseRipple('redis', '#f59e0b');
+          sfx.playNodeHit(320);
           narrative.innerHTML = "<strong class='text-amber-400'>⚠️ CACHE MISS!</strong> Cache tidak aktif. Terpaksa dialirkan ke Database...";
         }});
 
@@ -2052,6 +2267,7 @@
           haloMysql.setAttribute('stroke', '#f59e0b');
           haloMysql.setAttribute('filter', 'url(#glow-amber)');
           pulseRipple('mysql', '#f59e0b');
+          sfx.playDbDisk();
           narrative.innerHTML = "3. <strong class='text-amber-400'>MySQL Disk Read:</strong> Menjalankan InnoDB Query...";
         }});
 
@@ -2076,6 +2292,7 @@
         tl.to(haloPos, { duration: 0.15, onStart: () => {
           haloPos.setAttribute('stroke', '#f59e0b');
           pulseRipple('pos', '#f59e0b');
+          sfx.playDone();
         }});
 
         tl.to(energyGroup, { opacity: 0, duration: 0.25 });
@@ -2108,6 +2325,7 @@
     function toggleConcurrencyMode() {
       if (isBusyConcurrency) return;
       concurrencyMode = !concurrencyMode;
+      sfx.playClick();
 
       const btn = document.getElementById('btn-toggle-mode');
       const dot = document.getElementById('mode-indicator-dot');
@@ -2177,6 +2395,7 @@
     function simulateConcurrencyDiagram() {
       if (isBusyConcurrency) return;
       isBusyConcurrency = true;
+      sfx.playLaunch();
 
       const btn = document.getElementById('btn-fire-concurrency');
       btn.classList.add('opacity-50', 'pointer-events-none');
@@ -2207,6 +2426,7 @@
 
       tl.to('#halo-c-prod', { duration: 0.1, onStart: () => {
         pulseConcurrencyRipple('c-prod', '#06b6d4');
+        sfx.playNodeHit(440);
       }});
 
       tl.to(p1, {
@@ -2222,6 +2442,7 @@
       // Arrive at Go Channel
       tl.to('#halo-c-chan', { duration: 0.1, onStart: () => {
         pulseConcurrencyRipple('c-chan', '#06b6d4');
+        sfx.playNodeHit(520);
         if (concurrencyMode) {
           narrative.innerHTML = "2. <strong class='text-cyan-400'>FAN-OUT (Simultan):</strong> Go Channel mendistribusikan antrian serentak ke 4 Goroutines!";
         } else {
@@ -2235,7 +2456,8 @@
         tl.set([p1, p2, p3, p4], { opacity: 1 });
 
         // Fan-Out to 4 Workers simultaneously
-        tl.to(p1, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w1", align: "#track-c-chan-w1", alignOrigin: [0.5, 0.5] } }, "+=0.05");
+        tl.to({}, { duration: 0.05, onStart: () => sfx.playFanOut() }, "+=0.05");
+        tl.to(p1, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w1", align: "#track-c-chan-w1", alignOrigin: [0.5, 0.5] } }, "<");
         tl.to(p2, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w2", align: "#track-c-chan-w2", alignOrigin: [0.5, 0.5] } }, "<");
         tl.to(p3, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w3", align: "#track-c-chan-w3", alignOrigin: [0.5, 0.5] } }, "<");
         tl.to(p4, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w4", align: "#track-c-chan-w4", alignOrigin: [0.5, 0.5] } }, "<");
@@ -2259,6 +2481,7 @@
         tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
           pulseConcurrencyRipple('c-wg', '#10b981');
           document.getElementById('halo-c-wg').setAttribute('stroke', '#10b981');
+          sfx.playDone();
         }});
 
         tl.to([p1, p2, p3, p4], { opacity: 0, duration: 0.2 });
@@ -2285,11 +2508,13 @@
         // W2 pulses amber slowly
         tl.to({}, { duration: 0.2, onStart: () => {
           pulseConcurrencyRipple('w2', '#f59e0b');
+          sfx.playSingleTick(1);
           narrative.innerHTML = "3. <strong class='text-amber-400'>1 Worker bekerja sendirian:</strong> Memproses 1,000 tasks dalam loop berurutan...";
         }});
 
         // Delayed processing loop simulation
-        tl.to({}, { duration: 0.8 });
+        tl.to({}, { duration: 0.4, onStart: () => sfx.playSingleTick(2) });
+        tl.to({}, { duration: 0.4, onStart: () => sfx.playSingleTick(3) });
 
         // Crawl to WaitGroup
         tl.to(p1, {
@@ -2300,6 +2525,7 @@
 
         tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
           pulseConcurrencyRipple('c-wg', '#f59e0b');
+          sfx.playDone();
         }});
 
         tl.to(p1, { opacity: 0, duration: 0.2 });
