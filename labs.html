@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Engineering Labs &amp; Systems Architecture — Ahmad Fauzy</title>
-  <meta name="description" content="Eksplorasi interaktif arsitektur backend, caching terdistribusi, dan benchmark concurrency performa tinggi.">
+  <meta name="description" content="Eksplorasi interaktif arsitektur backend, caching terdistribusi, dan diagram concurrency performa tinggi.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://madfauzy.com/labs">
 
@@ -66,15 +66,6 @@
     .diag-node:hover {
       filter: brightness(1.2);
     }
-
-    /* Goroutine active pulses */
-    @keyframes pulse-worker {
-      0%, 100% { opacity: 0.3; transform: scale(0.95); }
-      50% { opacity: 1; transform: scale(1.05); }
-    }
-    .worker-active {
-      animation: pulse-worker 0.25s infinite ease-in-out;
-    }
   </style>
 </head>
 <body class="bg-[#060709] text-slate-200 font-sans antialiased min-h-screen lg:h-screen lg:max-h-screen blueprint-grid flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white overflow-x-hidden lg:overflow-hidden">
@@ -124,7 +115,7 @@
         Pilih Simulasi Sistem
       </h1>
       <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mx-auto">
-        Visualisasi interaktif arsitektur backend, distributed caching, dan benchmark performa tinggi. Pilih simulasi yang ingin kamu eksplorasi:
+        Visualisasi interaktif arsitektur backend, distributed caching, dan diagram concurrency performa tinggi. Pilih simulasi yang ingin kamu eksplorasi:
       </p>
     </div>
 
@@ -150,7 +141,7 @@
             Request Lifecycle &amp; Cache Flow
           </h2>
           <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
-            Simulasi visual interaktif alur request kasir (AYO Kasir) melintasi Backend Core, Redis RAM In-Memory, hingga proteksi beban I/O database MySQL Aurora RDS.
+            Simulasi diagram alur Kasir POS melintasi Backend Core, Redis RAM In-Memory, hingga proteksi beban I/O database MySQL Aurora RDS.
           </p>
         </div>
 
@@ -162,14 +153,14 @@
             <span class="text-amber-400 font-bold">138 ms</span>
           </div>
           <span class="flex items-center gap-1.5 text-emerald-400 font-bold group-hover:translate-x-1 transition-transform">
-            <span>Buka Lab</span>
+            <span>Buka Diagram</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </span>
         </div>
 
       </div>
 
-      <!-- CARD 2: GOLANG CONCURRENCY VS SEQUENTIAL RACE -->
+      <!-- CARD 2: GOLANG CONCURRENCY & WORKER POOL FLOW -->
       <div onclick="switchLab('concurrency-race')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:-translate-y-1">
         
         <div>
@@ -185,22 +176,22 @@
 
           <!-- Title & Description -->
           <h2 class="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
-            Concurrency vs Sequential Race
+            Golang Concurrency &amp; Worker Pool
           </h2>
           <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
-            Adu balap pemrosesan 1,000 tasks paralel: buktikan keunggulan Golang Worker Pool (8 Goroutines) dibanding single-thread sequential loop secara real-time.
+            Diagram arsitektur Fan-Out / Fan-In: bagaimana Go Channel mendistribusikan ribuan antrian tugas ke 4 Goroutines paralel secara simultan.
           </p>
         </div>
 
         <!-- Metrics Preview Pill -->
         <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
           <div class="flex items-center gap-2 text-slate-400">
-            <span class="text-cyan-400 font-bold">16.8x Faster</span>
+            <span class="text-cyan-400 font-bold">17.0x Faster</span>
             <span>•</span>
-            <span class="text-slate-400">1,000 Tasks</span>
+            <span class="text-slate-400">Fan-Out / Fan-In</span>
           </div>
           <span class="flex items-center gap-1.5 text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">
-            <span>Buka Lab</span>
+            <span>Buka Diagram</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </span>
         </div>
@@ -415,37 +406,37 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY VS SEQUENTIAL RACE                    -->
+  <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY & WORKER POOL ARCHITECTURE DIAGRAM   -->
   <!-- ========================================================================= -->
   <main id="view-concurrency-race" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
 
-    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
       
-      <!-- TOP CONTROL & TITLE BAR -->
-      <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/[0.06] shrink-0 font-mono">
+      <!-- SUBTLE COMPACT CONTROLS BAR -->
+      <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
         
         <!-- Left: Route Info -->
         <div class="flex items-center gap-2 text-xs">
           <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span class="text-white font-semibold">/concurrency-race</span>
+          <span class="text-white font-semibold">/fan-out-worker-pool</span>
           <span class="text-slate-600 hidden sm:inline">•</span>
-          <span class="text-slate-500 text-[11px] hidden sm:inline">Golang Worker Pool vs Single-Thread Loop</span>
+          <span class="text-slate-500 text-[11px] hidden sm:inline">Channel Queue ➔ 4 Goroutines ➔ WaitGroup</span>
         </div>
 
-        <!-- Right: Controls -->
+        <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
           
-          <!-- Task Count Selector -->
-          <div class="hidden sm:flex items-center gap-1 bg-white/[0.03] border border-white/10 rounded-lg p-0.5 text-[11px]">
-            <button onclick="setTaskCount(500)" id="btn-task-500" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">500</button>
-            <button onclick="setTaskCount(1000)" id="btn-task-1000" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 transition-all">1,000</button>
-            <button onclick="setTaskCount(2000)" id="btn-task-2000" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">2,000</button>
-          </div>
+          <!-- Mode Toggle: Concurrency vs Sequential -->
+          <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
+            <span id="mode-indicator-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Eksekusi:</span>
+            <strong id="mode-status-text" class="text-cyan-400 font-bold">GOLANG (Paralel)</strong>
+          </button>
 
-          <!-- Action Button: Start Race -->
-          <button id="btn-start-race" onclick="startConcurrencyRace()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
-            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
-            <span>Mulai Balapan</span>
+          <!-- Primary Action: Run Simulation -->
+          <button id="btn-fire-concurrency" onclick="simulateConcurrencyDiagram()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+            <span>Simulasikan</span>
             <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
           </button>
 
@@ -453,112 +444,230 @@
 
       </div>
 
-      <!-- MIDDLE: TWIN RACE TRACKS -->
-      <div class="flex-1 flex flex-col justify-center gap-4 sm:gap-5 my-2 min-h-0 overflow-y-auto">
+      <!-- MIDDLE: HERO CONCURRENCY SVG DIAGRAM (FAN-OUT / FAN-IN) -->
+      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
         
-        <!-- TRACK 1: SEQUENTIAL WORKER (SINGLE-THREAD) -->
-        <div class="bg-black/40 border border-white/[0.06] rounded-xl p-3 sm:p-4">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-              </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="text-xs sm:text-sm font-bold text-white">Sequential Execution</span>
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                    Single Thread (Blocking Loop)
-                  </span>
-                </div>
-                <div class="text-[11px] font-mono text-slate-500">
-                  1 Worker Thread • Menunggu tiap task selesai satu per satu
-                </div>
-              </div>
-            </div>
+        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
+          <defs>
+            <filter id="glow-cyan" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
 
-            <!-- Timer & Counter -->
-            <div class="text-right font-mono">
-              <div id="seq-timer" class="text-sm sm:text-base font-bold text-amber-400">0.00s</div>
-              <div id="seq-count" class="text-[11px] text-slate-500">0 / 1,000 tasks</div>
-            </div>
-          </div>
+            <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4" />
+            </marker>
+            <marker id="arrow-amber-c" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+            </marker>
+            <marker id="arrow-dim-c" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
+            </marker>
 
-          <!-- Progress Bar Track -->
-          <div class="w-full h-3 bg-white/[0.04] border border-white/[0.08] rounded-full overflow-hidden p-0.5">
-            <div id="seq-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full w-0 transition-all duration-75"></div>
-          </div>
-        </div>
+            <linearGradient id="grad-producer" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#141c2b" />
+              <stop offset="100%" stop-color="#0c121d" />
+            </linearGradient>
+            <linearGradient id="grad-channel" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#082329" />
+              <stop offset="100%" stop-color="#06161a" />
+            </linearGradient>
+            <linearGradient id="grad-worker" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#132328" />
+              <stop offset="100%" stop-color="#0b1518" />
+            </linearGradient>
+            <linearGradient id="grad-waitgroup" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#141c2b" />
+              <stop offset="100%" stop-color="#0c121d" />
+            </linearGradient>
+          </defs>
 
-        <!-- TRACK 2: GOLANG CONCURRENCY (WORKER POOL - 8 GOROUTINES) -->
-        <div class="bg-black/40 border border-cyan-500/20 rounded-xl p-3 sm:p-4 shadow-[0_0_20px_rgba(6,182,212,0.06)]">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2.5">
-              <div class="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
-                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-              </div>
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="text-xs sm:text-sm font-bold text-white">Golang Worker Pool</span>
-                  <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    8 Goroutines (Concurrent)
-                  </span>
-                </div>
-                <div class="text-[11px] font-mono text-slate-400">
-                  Channel Queue • 8 micro-threads memproses antrian serentak
-                </div>
-              </div>
-            </div>
+          <!-- PIPELINE 1: Producer -> Channel -->
+          <g id="pipe-c-prod-chan">
+            <path id="track-c-prod-chan" d="M 100 220 L 260 220" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
+            <path id="flow-c-prod-chan" class="pipeline-wire" d="M 100 220 L 260 220" fill="none" stroke="#06b6d4" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+            <text x="180" y="206" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" text-anchor="middle">1,000 Tasks Queue</text>
+          </g>
 
-            <!-- Timer & Counter -->
-            <div class="text-right font-mono">
-              <div id="go-timer" class="text-sm sm:text-base font-bold text-cyan-400">0.00s</div>
-              <div id="go-count" class="text-[11px] text-slate-400">0 / 1,000 tasks</div>
-            </div>
-          </div>
+          <!-- FAN-OUT BRANCHES: Channel -> 4 Workers -->
+          <!-- Branch 1 -> W1 -->
+          <g id="branch-w1">
+            <path id="track-c-chan-w1" d="M 260 220 C 350 220, 390 85, 480 85" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w1" class="pipeline-wire" d="M 260 220 C 350 220, 390 85, 480 85" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
 
-          <!-- Progress Bar Track -->
-          <div class="w-full h-3 bg-white/[0.04] border border-cyan-500/30 rounded-full overflow-hidden p-0.5 mb-3">
-            <div id="go-progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full w-0 shadow-[0_0_12px_rgba(6,182,212,0.8)] transition-all duration-75"></div>
-          </div>
+          <!-- Branch 2 -> W2 (Center Primary) -->
+          <g id="branch-w2">
+            <path id="track-c-chan-w2" d="M 260 220 C 350 220, 390 175, 480 175" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w2" class="pipeline-wire" d="M 260 220 C 350 220, 390 175, 480 175" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
 
-          <!-- 8 Active Goroutine Visual Indicators -->
-          <div class="flex items-center justify-between gap-1 sm:gap-2 pt-2 border-t border-white/[0.06] font-mono text-[10px]">
-            <span class="text-slate-500 hidden sm:inline">Active Workers:</span>
-            <div class="flex items-center gap-1 sm:gap-1.5 flex-1 justify-around sm:justify-start">
-              <div id="worker-1" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G1</div>
-              <div id="worker-2" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G2</div>
-              <div id="worker-3" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G3</div>
-              <div id="worker-4" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G4</div>
-              <div id="worker-5" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G5</div>
-              <div id="worker-6" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G6</div>
-              <div id="worker-7" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G7</div>
-              <div id="worker-8" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G8</div>
-            </div>
-            <span id="worker-status-badge" class="px-2 py-0.5 rounded bg-white/[0.04] text-slate-400">Idle</span>
-          </div>
+          <!-- Branch 3 -> W3 -->
+          <g id="branch-w3">
+            <path id="track-c-chan-w3" d="M 260 220 C 350 220, 390 265, 480 265" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w3" class="pipeline-wire" d="M 260 220 C 350 220, 390 265, 480 265" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
 
-        </div>
+          <!-- Branch 4 -> W4 -->
+          <g id="branch-w4">
+            <path id="track-c-chan-w4" d="M 260 220 C 350 220, 390 355, 480 355" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w4" class="pipeline-wire" d="M 260 220 C 350 220, 390 355, 480 355" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- FAN-IN BRANCHES: 4 Workers -> WaitGroup Aggregator -->
+          <!-- Return W1 -> WaitGroup -->
+          <g id="return-w1">
+            <path id="track-c-w1-res" d="M 540 85 C 610 85, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w1-res" class="pipeline-wire" d="M 540 85 C 610 85, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W2 -> WaitGroup -->
+          <g id="return-w2">
+            <path id="track-c-w2-res" d="M 540 175 C 610 175, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w2-res" class="pipeline-wire" d="M 540 175 C 610 175, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W3 -> WaitGroup -->
+          <g id="return-w3">
+            <path id="track-c-w3-res" d="M 540 265 C 610 265, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w3-res" class="pipeline-wire" d="M 540 265 C 610 265, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W4 -> WaitGroup -->
+          <g id="return-w4">
+            <path id="track-c-w4-res" d="M 540 355 C 610 355, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w4-res" class="pipeline-wire" d="M 540 355 C 610 355, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- LABELS OVER PIPES -->
+          <text x="370" y="105" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">Fan-Out ➔</text>
+          <text x="635" y="105" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">Fan-In ➔</text>
+
+          <!-- COMET PACKETS (4 PARALLEL PACKETS) -->
+          <g id="c-packet-1" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-2" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-3" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-4" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+
+          <!-- ==================== DIAGRAM NODES ==================== -->
+
+          <!-- 1: PRODUCER -->
+          <g id="node-c-prod" class="diag-node" transform="translate(100, 220)">
+            <circle id="ripple-c-prod" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-prod" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-producer)" stroke="#1e293b" stroke-width="1.5" />
+            <!-- Stack of jobs icon -->
+            <rect x="-18" y="-18" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-18" y="-4" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-18" y="10" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">Job Producer</text>
+            <text x="0" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Task Queue</text>
+          </g>
+
+          <!-- 2: GO CHANNEL (BUFFERED) -->
+          <g id="node-c-chan" class="diag-node" transform="translate(260, 220)">
+            <circle id="ripple-c-chan" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-chan" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#06b6d4" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-channel)" stroke="#0891b2" stroke-width="1.5" />
+            <!-- Channel pipe icon -->
+            <path d="M -16 -12 L 16 -12 M -16 12 L 16 12" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" />
+            <circle cx="-8" cy="0" r="4" fill="#06b6d4" />
+            <circle cx="8" cy="0" r="4" fill="#06b6d4" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">Go Channel</text>
+            <text x="0" y="82" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" text-anchor="middle">make(chan Job)</text>
+          </g>
+
+          <!-- 3: 4 GOROUTINE WORKER NODES -->
+          <!-- WORKER 1 -->
+          <g id="node-w1" class="diag-node" transform="translate(510, 85)">
+            <circle id="ripple-w1" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w1" x="-55" y="-25" width="110" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-52" y="-22" width="104" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-32" cy="0" r="8" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-32" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G1</text>
+            <text x="8" y="-2" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">Goroutine #1</text>
+            <text id="sub-w1" x="8" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Active Worker</text>
+          </g>
+
+          <!-- WORKER 2 (PRIMARY) -->
+          <g id="node-w2" class="diag-node" transform="translate(510, 175)">
+            <circle id="ripple-w2" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w2" x="-55" y="-25" width="110" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-52" y="-22" width="104" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-32" cy="0" r="8" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-32" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G2</text>
+            <text x="8" y="-2" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">Goroutine #2</text>
+            <text id="sub-w2" x="8" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Active Worker</text>
+          </g>
+
+          <!-- WORKER 3 -->
+          <g id="node-w3" class="diag-node" transform="translate(510, 265)">
+            <circle id="ripple-w3" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w3" x="-55" y="-25" width="110" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-52" y="-22" width="104" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-32" cy="0" r="8" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-32" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G3</text>
+            <text x="8" y="-2" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">Goroutine #3</text>
+            <text id="sub-w3" x="8" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Active Worker</text>
+          </g>
+
+          <!-- WORKER 4 -->
+          <g id="node-w4" class="diag-node" transform="translate(510, 355)">
+            <circle id="ripple-w4" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w4" x="-55" y="-25" width="110" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-52" y="-22" width="104" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-32" cy="0" r="8" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-32" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G4</text>
+            <text x="8" y="-2" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="11" text-anchor="middle">Goroutine #4</text>
+            <text id="sub-w4" x="8" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Active Worker</text>
+          </g>
+
+          <!-- 4: SYNC.WAITGROUP (AGGREGATOR) -->
+          <g id="node-c-wg" class="diag-node" transform="translate(700, 220)">
+            <circle id="ripple-c-wg" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-wg" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-waitgroup)" stroke="#1e293b" stroke-width="1.5" />
+            <!-- Checkmark badge icon -->
+            <circle cx="0" cy="-2" r="14" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <path d="M -6 -2 L -1 3 L 7 -5" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">WaitGroup</text>
+            <text x="0" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">sync.WaitGroup</text>
+          </g>
+
+        </svg>
 
       </div>
 
-      <!-- BOTTOM ROW: RACE RESULT TELEMETRY -->
+      <!-- BOTTOM ROW: REFINED TELEMETRY BAR -->
       <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
         
         <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0" id="race-indicator-light"></span>
-          <span id="race-narrative" class="text-slate-400">
-            Sistem Standby. Tekan <strong>"Mulai Balapan"</strong> untuk mengeksekusi benchmark.
+          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0" id="c-indicator-light"></span>
+          <span id="c-flow-narrative" class="text-slate-400">
+            Sistem Standby. Tekan <strong>"Simulasikan"</strong> untuk melihat pergerakan concurrency.
           </span>
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
           <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
-            <span class="text-slate-500">Speedup:</span>
-            <strong id="val-speedup" class="text-cyan-400 font-bold text-xs">-</strong>
+            <span class="text-slate-500">Latency:</span>
+            <strong id="val-c-latency" class="text-cyan-400 font-bold text-xs">0.18s</strong>
           </div>
           <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
-            <span class="text-slate-500">Go Throughput:</span>
-            <strong id="val-throughput" class="text-emerald-400 font-bold text-xs">-</strong>
+            <span class="text-slate-500">Throughput:</span>
+            <strong id="val-c-throughput" class="text-emerald-400 font-bold text-xs">5,400 tasks/s</strong>
           </div>
         </div>
 
@@ -582,16 +691,15 @@
 
   <!-- SCRIPT ENGINE: VIEW ROUTER + SIMULATION CONTROLLERS -->
   <script>
-    // Register official GSAP MotionPathPlugin
     if (window.MotionPathPlugin) {
       gsap.registerPlugin(MotionPathPlugin);
     }
 
     let currentLab = 'hub';
     let redisEnabled = true;
+    let concurrencyMode = true; // true = Golang Parallel (4 workers), false = Sequential (1 worker)
     let isBusyPacket = false;
-    let isBusyRace = false;
-    let raceTaskCount = 1000;
+    let isBusyConcurrency = false;
 
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
@@ -656,7 +764,7 @@
         viewRace.classList.add('flex');
         btnBackHub.classList.remove('hidden');
         btnBackHub.classList.add('flex');
-        navLabTitle.textContent = "Lab 02: Golang Concurrency vs Sequential";
+        navLabTitle.textContent = "Lab 02: Golang Concurrency & Worker Pool";
         gsap.fromTo(viewRace, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
       }
 
@@ -930,148 +1038,236 @@
     }
 
     // =========================================================================
-    // LAB 02 CONTROLLERS: GOLANG CONCURRENCY VS SEQUENTIAL RACE
+    // LAB 02 CONTROLLERS: GOLANG CONCURRENCY & WORKER POOL DIAGRAM
     // =========================================================================
-    function setTaskCount(n) {
-      if (isBusyRace) return;
-      raceTaskCount = n;
-      ['500', '1000', '2000'].forEach(val => {
-        const btn = document.getElementById(`btn-task-${val}`);
-        if (parseInt(val) === n) {
-          btn.className = "px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 transition-all";
-        } else {
-          btn.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all";
-        }
-      });
-      document.getElementById('seq-count').innerText = `0 / ${n.toLocaleString()} tasks`;
-      document.getElementById('go-count').innerText = `0 / ${n.toLocaleString()} tasks`;
-      document.getElementById('seq-progress-bar').style.width = '0%';
-      document.getElementById('go-progress-bar').style.width = '0%';
-      document.getElementById('seq-timer').innerText = '0.00s';
-      document.getElementById('go-timer').innerText = '0.00s';
-      document.getElementById('val-speedup').innerText = '-';
-      document.getElementById('val-throughput').innerText = '-';
+    function pulseConcurrencyRipple(nodeId, color) {
+      const ripple = document.getElementById(`ripple-${nodeId}`);
+      if (!ripple) return;
+      ripple.setAttribute('stroke', color);
+      gsap.fromTo(ripple, 
+        { scale: 0.8, opacity: 1, transformOrigin: 'center center' }, 
+        { scale: 1.5, opacity: 0, duration: 0.5, ease: 'power2.out' }
+      );
     }
 
-    function startConcurrencyRace() {
-      if (isBusyRace) return;
-      isBusyRace = true;
+    function toggleConcurrencyMode() {
+      if (isBusyConcurrency) return;
+      concurrencyMode = !concurrencyMode;
 
-      const btn = document.getElementById('btn-start-race');
+      const btn = document.getElementById('btn-toggle-mode');
+      const dot = document.getElementById('mode-indicator-dot');
+      const statusText = document.getElementById('mode-status-text');
+      
+      const flows = ['flow-c-chan-w1', 'flow-c-chan-w3', 'flow-c-chan-w4'];
+      const retFlows = ['flow-c-w1-res', 'flow-c-w3-res', 'flow-c-w4-res'];
+      const halos = ['halo-w1', 'halo-w3', 'halo-w4'];
+      const subs = ['sub-w1', 'sub-w3', 'sub-w4'];
+
+      if (concurrencyMode) {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-pulse";
+        statusText.className = "text-cyan-400 font-bold";
+        statusText.innerText = "GOLANG (Paralel)";
+
+        // Enable 4 wires
+        flows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+          el.setAttribute('opacity', '1');
+        });
+        retFlows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+          el.setAttribute('opacity', '0.6');
+        });
+        halos.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+        });
+        subs.forEach(id => {
+          const el = document.getElementById(id);
+          el.textContent = "Active Worker";
+          el.setAttribute('fill', '#06b6d4');
+        });
+
+      } else {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300 hover:border-amber-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        statusText.className = "text-amber-400 font-bold";
+        statusText.innerText = "SEQUENTIAL (1 Worker)";
+
+        // Dim disabled workers
+        flows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+          el.setAttribute('opacity', '0.2');
+        });
+        retFlows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+          el.setAttribute('opacity', '0.1');
+        });
+        halos.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+        });
+        subs.forEach(id => {
+          const el = document.getElementById(id);
+          el.textContent = "Disabled (0 Worker)";
+          el.setAttribute('fill', '#64748b');
+        });
+      }
+    }
+
+    function simulateConcurrencyDiagram() {
+      if (isBusyConcurrency) return;
+      isBusyConcurrency = true;
+
+      const btn = document.getElementById('btn-fire-concurrency');
       btn.classList.add('opacity-50', 'pointer-events-none');
 
-      const narrative = document.getElementById('race-narrative');
-      const light = document.getElementById('race-indicator-light');
-      const seqBar = document.getElementById('seq-progress-bar');
-      const goBar = document.getElementById('go-progress-bar');
-      const seqTimer = document.getElementById('seq-timer');
-      const goTimer = document.getElementById('go-timer');
-      const seqCount = document.getElementById('seq-count');
-      const goCount = document.getElementById('go-count');
-      const valSpeedup = document.getElementById('val-speedup');
-      const valThroughput = document.getElementById('val-throughput');
-      const workerStatus = document.getElementById('worker-status-badge');
+      const narrative = document.getElementById('c-flow-narrative');
+      const light = document.getElementById('c-indicator-light');
+      const valLat = document.getElementById('val-c-latency');
+      const valThroughput = document.getElementById('val-c-throughput');
 
-      // Reset
-      seqBar.style.width = '0%';
-      goBar.style.width = '0%';
-      seqTimer.innerText = '0.00s';
-      goTimer.innerText = '0.00s';
+      const p1 = document.getElementById('c-packet-1');
+      const p2 = document.getElementById('c-packet-2');
+      const p3 = document.getElementById('c-packet-3');
+      const p4 = document.getElementById('c-packet-4');
+
       light.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0";
-      narrative.innerHTML = `Mengeksekusi <strong>${raceTaskCount.toLocaleString()} concurrent tasks</strong>... Perhatikan lonjakan Goroutines!`;
+      narrative.innerHTML = "1. Job Producer mengirim <strong>1,000 tasks</strong> ke Go Channel Queue...";
 
-      // Activate Goroutine worker LEDs
-      workerStatus.innerText = "8 Goroutines Busy";
-      workerStatus.className = "px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 animate-pulse";
-      for (let i = 1; i <= 8; i++) {
-        const w = document.getElementById(`worker-${i}`);
-        w.className = "px-2 py-0.5 rounded bg-cyan-500/25 border border-cyan-400 text-cyan-200 font-bold worker-active";
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isBusyConcurrency = false;
+          btn.classList.remove('opacity-50', 'pointer-events-none');
+        }
+      });
+
+      // Stage 1: Send batch to Channel
+      tl.set([p1, p2, p3, p4], { opacity: 0 });
+      tl.set(p1, { opacity: 1 });
+
+      tl.to('#halo-c-prod', { duration: 0.1, onStart: () => {
+        pulseConcurrencyRipple('c-prod', '#06b6d4');
+      }});
+
+      tl.to(p1, {
+        duration: 0.45,
+        ease: "power1.inOut",
+        motionPath: {
+          path: "#track-c-prod-chan",
+          align: "#track-c-prod-chan",
+          alignOrigin: [0.5, 0.5]
+        }
+      });
+
+      // Arrive at Go Channel
+      tl.to('#halo-c-chan', { duration: 0.1, onStart: () => {
+        pulseConcurrencyRipple('c-chan', '#06b6d4');
+        if (concurrencyMode) {
+          narrative.innerHTML = "2. <strong class='text-cyan-400'>FAN-OUT (Simultan):</strong> Go Channel mendistribusikan antrian serentak ke 4 Goroutines!";
+        } else {
+          narrative.innerHTML = "2. <strong class='text-amber-400'>SEQUENTIAL BOTTLENECK:</strong> Hanya 1 worker aktif, antrian menunggu satu per satu...";
+        }
+      }});
+
+      if (concurrencyMode) {
+        // ================= GOLANG PARALLEL FLOW =================
+        // Reveal all 4 packets at channel
+        tl.set([p1, p2, p3, p4], { opacity: 1 });
+
+        // Fan-Out to 4 Workers simultaneously
+        tl.to(p1, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w1", align: "#track-c-chan-w1", alignOrigin: [0.5, 0.5] } }, "+=0.05");
+        tl.to(p2, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w2", align: "#track-c-chan-w2", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p3, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w3", align: "#track-c-chan-w3", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p4, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w4", align: "#track-c-chan-w4", alignOrigin: [0.5, 0.5] } }, "<");
+
+        // All 4 Workers pulse simultaneously
+        tl.to({}, { duration: 0.1, onStart: () => {
+          pulseConcurrencyRipple('w1', '#06b6d4');
+          pulseConcurrencyRipple('w2', '#06b6d4');
+          pulseConcurrencyRipple('w3', '#06b6d4');
+          pulseConcurrencyRipple('w4', '#06b6d4');
+          narrative.innerHTML = "3. <strong class='text-cyan-300'>4 Goroutines mengeksekusi paralel di CPU cores!</strong> Memproses hasil ke WaitGroup...";
+        }});
+
+        // Fan-In to sync.WaitGroup
+        tl.to(p1, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w1-res", align: "#track-c-w1-res", alignOrigin: [0.5, 0.5] } }, "+=0.1");
+        tl.to(p2, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w2-res", align: "#track-c-w2-res", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p3, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w3-res", align: "#track-c-w3-res", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p4, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w4-res", align: "#track-c-w4-res", alignOrigin: [0.5, 0.5] } }, "<");
+
+        // WaitGroup Completed!
+        tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('c-wg', '#10b981');
+          document.getElementById('halo-c-wg').setAttribute('stroke', '#10b981');
+        }});
+
+        tl.to([p1, p2, p3, p4], { opacity: 0, duration: 0.2 });
+
+        tl.to({}, { duration: 0.1, onComplete: () => {
+          document.getElementById('halo-c-wg').setAttribute('stroke', '#334155');
+          light.className = "w-2 h-2 rounded-full bg-emerald-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-cyan-300'>0.18s</strong>! 1,000 tasks tuntas berkat <strong>Fan-Out Goroutines</strong>.";
+          valLat.innerText = "0.18s";
+          valLat.className = "text-cyan-400 font-bold text-xs";
+          valThroughput.innerText = "5,420 tasks/s";
+          valThroughput.className = "text-emerald-400 font-bold text-xs";
+        }});
+
+      } else {
+        // ================= SEQUENTIAL SINGLE-THREAD FLOW =================
+        // Only W2 receives packet slowly
+        tl.to(p1, {
+          duration: 1.2,
+          ease: "linear",
+          motionPath: { path: "#track-c-chan-w2", align: "#track-c-chan-w2", alignOrigin: [0.5, 0.5] }
+        });
+
+        // W2 pulses amber slowly
+        tl.to({}, { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('w2', '#f59e0b');
+          narrative.innerHTML = "3. <strong class='text-amber-400'>1 Worker bekerja sendirian:</strong> Memproses 1,000 tasks dalam loop berurutan...";
+        }});
+
+        // Delayed processing loop simulation
+        tl.to({}, { duration: 0.8 });
+
+        // Crawl to WaitGroup
+        tl.to(p1, {
+          duration: 1.1,
+          ease: "power1.inOut",
+          motionPath: { path: "#track-c-w2-res", align: "#track-c-w2-res", alignOrigin: [0.5, 0.5] }
+        });
+
+        tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('c-wg', '#f59e0b');
+        }});
+
+        tl.to(p1, { opacity: 0, duration: 0.2 });
+
+        tl.to({}, { duration: 0.1, onComplete: () => {
+          light.className = "w-2 h-2 rounded-full bg-amber-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-amber-400'>3.15s</strong> (Lambat karena antrian CPU bottleneck di 1 thread).";
+          valLat.innerText = "3.15s";
+          valLat.className = "text-amber-400 font-bold text-xs";
+          valThroughput.innerText = "318 tasks/s";
+          valThroughput.className = "text-amber-400 font-bold text-xs";
+        }});
       }
-
-      const totalTasks = raceTaskCount;
-      const startTime = performance.now();
-
-      // Golang finishes in ~0.20s
-      const goDuration = totalTasks === 500 ? 110 : (totalTasks === 1000 ? 185 : 340); // ms
-      // Sequential finishes in ~3.1s
-      const seqDuration = totalTasks === 500 ? 1600 : (totalTasks === 1000 ? 3150 : 6100); // ms
-
-      let goDone = false;
-      let seqDone = false;
-      let goFinalTime = 0;
-
-      // Animation Loop for Smooth Race Progress
-      const raceInterval = setInterval(() => {
-        const now = performance.now();
-        const elapsed = now - startTime;
-
-        // Update Golang
-        if (!goDone) {
-          const goProgress = Math.min(1, elapsed / goDuration);
-          const currentGoTasks = Math.floor(goProgress * totalTasks);
-          goBar.style.width = `${goProgress * 100}%`;
-          goCount.innerText = `${currentGoTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks`;
-          goTimer.innerText = `${(elapsed / 1000).toFixed(2)}s`;
-
-          if (goProgress >= 1) {
-            goDone = true;
-            goFinalTime = (elapsed / 1000).toFixed(2);
-            goTimer.innerText = `${goFinalTime}s`;
-            goBar.style.width = '100%';
-            goCount.innerText = `${totalTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks (DONE!)`;
-            
-            // Turn off Goroutine pulsing
-            workerStatus.innerText = "8 Goroutines Idle (Completed)";
-            workerStatus.className = "px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/40";
-            for (let i = 1; i <= 8; i++) {
-              const w = document.getElementById(`worker-${i}`);
-              w.className = "px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-300";
-            }
-
-            const rps = Math.round(totalTasks / (elapsed / 1000));
-            valThroughput.innerText = `${rps.toLocaleString()} tasks/s`;
-            narrative.innerHTML = `<strong class='text-cyan-300'>⚡ GOLANG SELESAI DALAM ${goFinalTime}s!</strong> Sequential masih berjalan lambat...`;
-          }
-        }
-
-        // Update Sequential
-        if (!seqDone) {
-          const seqProgress = Math.min(1, elapsed / seqDuration);
-          const currentSeqTasks = Math.floor(seqProgress * totalTasks);
-          seqBar.style.width = `${seqProgress * 100}%`;
-          seqCount.innerText = `${currentSeqTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks`;
-          seqTimer.innerText = `${(elapsed / 1000).toFixed(2)}s`;
-
-          if (seqProgress >= 1) {
-            seqDone = true;
-            clearInterval(raceInterval);
-            const seqFinalTime = (elapsed / 1000).toFixed(2);
-            seqTimer.innerText = `${seqFinalTime}s`;
-            seqBar.style.width = '100%';
-            seqCount.innerText = `${totalTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks (DONE)`;
-
-            const speedupRatio = (seqDuration / goDuration).toFixed(1);
-            valSpeedup.innerText = `${speedupRatio}x Lebih Cepat`;
-            valSpeedup.className = "text-cyan-400 font-bold text-xs";
-
-            light.className = "w-2 h-2 rounded-full bg-emerald-400 shrink-0";
-            narrative.innerHTML = `🏁 <strong>Balapan Selesai!</strong> Golang Worker Pool <strong class='text-cyan-300'>${speedupRatio}x lebih cepat</strong> (${goFinalTime}s vs ${seqFinalTime}s).`;
-
-            btn.classList.remove('opacity-50', 'pointer-events-none');
-            isBusyRace = false;
-          }
-        }
-      }, 16);
     }
 
-    // Global keyboard Space trigger for active lab
+    // Spacebar trigger for active lab
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space' && e.target === document.body) {
         e.preventDefault();
         if (currentLab === 'cache-flow') {
           simulatePacket();
         } else if (currentLab === 'concurrency-race') {
-          startConcurrencyRace();
+          simulateConcurrencyDiagram();
         }
       }
     });
