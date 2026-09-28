@@ -1,89 +1,865 @@
 <!DOCTYPE html>
-<html class="h-100" lang="en">
-
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link type="image/x-icon" href="assets/img/logo-1.png" rel="shortcut icon">
-  <link href="https://fonts.googleapis.com" rel="preconnect">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/css/style.css" rel="stylesheet">
-  <title>Ahmad Fauzy - Back End Developer</title>
+  <title>Ahmad Fauzy — Backend Systems & Distributed Architecture</title>
+  <meta name="description" content="Personal portfolio of Ahmad Fauzy, a Backend Developer specializing in scalable APIs, distributed microservices, database optimization, and high-concurrency systems.">
+  <link rel="shortcut icon" href="assets/img/logo-1.png" type="image/x-icon">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 Browser Engine -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --color-canvas: #060709;
+      --color-surface: #0e1117;
+      --color-surface-hover: #161b22;
+      --color-surface-border: rgba(255, 255, 255, 0.08);
+      --color-brand: #6366f1;
+      --color-brand-glow: rgba(99, 102, 241, 0.25);
+      --color-emerald-glow: rgba(16, 185, 129, 0.2);
+    }
+  </style>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Motion (by Framer Motion team) -->
+  <script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
+
+  <style>
+    ::selection {
+      background: rgba(99, 102, 241, 0.35);
+      color: #ffffff;
+    }
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+    .lenis.lenis-scrolling iframe {
+      pointer-events: none;
+    }
+
+    /* Ambient Background Grid & Radial Glow */
+    .bg-grid-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Interactive Spotlight Card (Linear Style) */
+    .glow-card {
+      position: relative;
+      background: rgba(14, 17, 23, 0.75);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .glow-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(500px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(99, 102, 241, 0.14), transparent 45%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .glow-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px -10px rgba(99, 102, 241, 0.18);
+    }
+    .glow-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Code Terminal Window */
+    .terminal-window {
+      background: rgba(10, 12, 16, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(99, 102, 241, 0.08);
+    }
+
+    /* Pulsing status beacon */
+    @keyframes beacon {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.15); }
+    }
+    .status-beacon {
+      animation: beacon 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
 </head>
 
-<body class="h-100 d-flex flex-column text-light bg-dark">
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="home.html">
-        <div class="logo"></div>
-      </a>
-      <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link link-danger fw-medium active" href="home.html" aria-current="page">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="projects.html">Projects</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<body class="bg-[#060709] text-slate-100 font-sans antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden min-h-screen">
 
-  <main class="container my-auto">
-    <div class="row text-center">
-      <div class="col-12">
-        <img class="img-thumbnail rounded-circle my-3" src="assets/img/profile-picture.png" alt="Profile Picture" width="200" height="200">
-        <h1 class="fs-3">
-          Hello <span class="waving-hand">👋</span>, I'm <span class="fw-bold text-danger">Ahmad Fauzy</span>
-        </h1>
-        <h2 class="fs-5 my-lg-3">Back End Developer - Information Systems</h2>
+  <!-- Ambient Light Orbs -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[450px] bg-gradient-to-tr from-indigo-600/20 via-violet-600/15 to-transparent blur-[120px] rounded-full"></div>
+    <div class="absolute top-[40%] -left-32 w-[500px] h-[400px] bg-blue-600/10 blur-[130px] rounded-full"></div>
+    <div class="absolute top-[70%] -right-32 w-[550px] h-[450px] bg-indigo-600/10 blur-[140px] rounded-full"></div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-60"></div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-[#060709]/80 border-b border-white/[0.06]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo / Identity -->
+      <a href="#hero" class="flex items-center gap-3 group">
+        <div class="relative w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500/30 to-violet-500/10 border border-indigo-500/30 flex items-center justify-center p-1 overflow-hidden transition-transform group-hover:scale-105">
+          <img src="assets/img/logo-1.png" alt="Fauzy Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+          <span class="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
+            madfauzy<span class="text-indigo-400 font-mono">.com</span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono">backend.sys // wib</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1 bg-white/[0.03] border border-white/[0.08] px-3 py-1.5 rounded-full text-xs font-medium text-slate-300">
+        <a href="#hero" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors text-indigo-400 font-medium">~/home</a>
+        <a href="#architecture" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/architecture</a>
+        <a href="#stack" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/stack</a>
+        <a href="#projects" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/projects</a>
+        <a href="#experience" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/experience</a>
+      </nav>
+
+      <!-- Right CTAs -->
+      <div class="flex items-center gap-2.5">
+        <a href="https://github.com/madfauzy" target="_blank" rel="noreferrer" title="GitHub" class="w-9 h-9 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-all">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noreferrer" title="LinkedIn" class="w-9 h-9 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-all">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </a>
+        <a href="mailto:madfauzy28@gmail.com" class="hidden sm:inline-flex items-center gap-2 text-xs font-medium px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/25 transition-all">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+          <span>Let's Talk</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="relative z-10 pt-28 sm:pt-32 pb-24">
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 lg:mb-32">
+      <div class="grid lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Left: Intro Copy -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- System Status Pill -->
+          <div class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 status-beacon"></span>
+            <span>SYSTEM HEALTHY: READY FOR PRODUCTION</span>
+          </div>
+
+          <!-- Main Title -->
+          <div class="space-y-2">
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1]">
+              Architecting <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-cyan-300 bg-clip-text text-transparent">Resilient Systems</span> &amp; High-Load APIs.
+            </h1>
+            <p class="text-base sm:text-lg text-slate-400 leading-relaxed font-normal pt-2 max-w-xl">
+              I'm <strong class="text-slate-100 font-semibold">Ahmad Fauzy</strong> — a Backend Developer with passion for distributed services, sub-millisecond database queries, clean API contracts, and Linux server orchestration.
+            </p>
+          </div>
+
+          <!-- Stats / Key Metrics Grid -->
+          <div class="grid grid-cols-3 gap-3 pt-2 max-w-md">
+            <div class="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02]">
+              <div class="text-xl sm:text-2xl font-bold font-mono text-indigo-400">3+</div>
+              <div class="text-[11px] text-slate-400 font-medium">Years Backend Exp</div>
+            </div>
+            <div class="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02]">
+              <div class="text-xl sm:text-2xl font-bold font-mono text-emerald-400">&lt;20ms</div>
+              <div class="text-[11px] text-slate-400 font-medium">Avg API Latency</div>
+            </div>
+            <div class="p-3.5 rounded-xl border border-white/[0.08] bg-white/[0.02]">
+              <div class="text-xl sm:text-2xl font-bold font-mono text-cyan-400">99.9%</div>
+              <div class="text-[11px] text-slate-400 font-medium">Uptime Mindset</div>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div class="flex flex-wrap items-center gap-3 pt-3">
+            <a href="#projects" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate-950 font-semibold text-sm hover:bg-slate-200 transition-all shadow-lg shadow-white/5">
+              <span>View Production Works</span>
+              <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
+            </a>
+            <a href="https://github.com/madfauzy" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/[0.04] hover:bg-white/[0.08] text-white font-medium text-sm transition-all">
+              <svg class="w-4 h-4 fill-current text-indigo-400" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span>GitHub Repositories</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right: Interactive Live Backend Terminal Card -->
+        <div class="lg:col-span-5">
+          <div class="terminal-window rounded-2xl p-5 shadow-2xl relative overflow-hidden group">
+            
+            <!-- Terminal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-white/[0.08] mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                <span class="ml-2 text-xs font-mono text-slate-400">fauzy@vps-infra:~</span>
+              </div>
+              <span class="text-[10px] font-mono text-indigo-400/80 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">bash // v5.2</span>
+            </div>
+
+            <!-- Terminal Body -->
+            <div class="font-mono text-xs space-y-3 leading-relaxed">
+              <div class="flex items-center gap-2 text-slate-400">
+                <span class="text-emerald-400">➜</span>
+                <span class="text-indigo-300">curl</span>
+                <span class="text-slate-300">-X GET https://madfauzy.com/api/v1/health</span>
+              </div>
+
+              <!-- Output snippet -->
+              <div class="bg-black/60 p-3.5 rounded-xl border border-white/[0.06] space-y-1.5 text-slate-300 text-[11px]">
+                <div class="text-emerald-400 flex items-center justify-between">
+                  <span>HTTP/2 200 OK</span>
+                  <span class="text-slate-500">12ms</span>
+                </div>
+                <div>{</div>
+                <div class="pl-4 text-slate-400">"status": <span class="text-emerald-300">"healthy"</span>,</div>
+                <div class="pl-4 text-slate-400">"engineer": <span class="text-cyan-300">"Ahmad Fauzy"</span>,</div>
+                <div class="pl-4 text-slate-400">"role": <span class="text-amber-300">"Backend Systems Developer"</span>,</div>
+                <div class="pl-4 text-slate-400">"focus": [<span class="text-violet-300">"APIs"</span>, <span class="text-violet-300">"Microservices"</span>, <span class="text-violet-300">"DB Tuning"</span>],</div>
+                <div class="pl-4 text-slate-400">"cache_hit_rate": <span class="text-emerald-300">"99.4%"</span>,</div>
+                <div class="pl-4 text-slate-400">"active_runtime": <span class="text-slate-200">"Go, Node.js, PHP/Laravel"</span></div>
+                <div>}</div>
+              </div>
+
+              <!-- Live Ping Benchmark Line -->
+              <div class="pt-2 flex items-center justify-between text-[11px] text-slate-400 border-t border-white/[0.06]">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                  <span>Redis Sentinel: Synchronized</span>
+                </span>
+                <span class="text-slate-500 font-mono">PID 21419</span>
+              </div>
+            </div>
+
+            <!-- Subtle Gradient Shine on Corner -->
+            <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE & PHILOSOPHY BENTO SECTION -->
+    <section id="architecture" class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 lg:mb-32">
+      <div class="mb-12">
+        <span class="text-xs font-mono text-indigo-400 uppercase tracking-widest block mb-2">// 01. CORE ENGINEERING PILLARS</span>
+        <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+          Built for scale, tuned for reliability.
+        </h2>
+        <p class="text-sm sm:text-base text-slate-400 max-w-2xl mt-2">
+          Writing backend code isn't just about glueing controllers. It's about designing deterministic state, minimizing lock contention, and preventing cascade failures.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        
+        <!-- Bento 1 -->
+        <div class="glow-card rounded-2xl p-6 flex flex-col justify-between group">
+          <div>
+            <div class="w-11 h-11 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">High Concurrency &amp; Async I/O</h3>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Handling non-blocking request pipelines, background jobs queues with Redis, rate limiting, and idempotency guarantees for payments and webhooks.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <span>Goroutines / Node Event Loop</span>
+            <span class="text-emerald-400">Zero Leak</span>
+          </div>
+        </div>
+
+        <!-- Bento 2 -->
+        <div class="glow-card rounded-2xl p-6 flex flex-col justify-between group">
+          <div>
+            <div class="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="database" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">Database Indexing &amp; Modeling</h3>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Schema migrations, normalization balance, compound B-Tree indexing, execution plan analysis (EXPLAIN), connection pooling, and multi-tenant isolation.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <span>MySQL / PostgreSQL / Redis</span>
+            <span class="text-indigo-400">O(log N)</span>
+          </div>
+        </div>
+
+        <!-- Bento 3 -->
+        <div class="glow-card rounded-2xl p-6 flex flex-col justify-between group">
+          <div>
+            <div class="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5 group-hover:scale-110 transition-transform">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-white mb-2">Security &amp; Production Ops</h3>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Hardened Linux VPS configurations, OAuth2 / JWT stateless token lifecycle, SSL/TLS ECDSA, automated backup routines, and zero-downtime Nginx reloads.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-400">
+            <span>Docker / Nginx / Linux</span>
+            <span class="text-cyan-400">SSL A+ Rating</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TECH STACK & SYSTEM MATRIX -->
+    <section id="stack" class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 lg:mb-32">
+      <div class="mb-12">
+        <span class="text-xs font-mono text-indigo-400 uppercase tracking-widest block mb-2">// 02. TECHNICAL ARSENAL</span>
+        <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+          Stack &amp; Tooling
+        </h2>
+        <p class="text-sm sm:text-base text-slate-400 max-w-xl mt-2">
+          Battle-tested technologies I utilize across enterprise products, microservices, and high-frequency backend jobs.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 font-bold text-xs font-mono">PHP</div>
+          <div>
+            <div class="text-sm font-semibold text-white">PHP &amp; Laravel</div>
+            <div class="text-[11px] text-slate-400 font-mono">Lumen, Eloquent, Filament</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs font-mono">Node</div>
+          <div>
+            <div class="text-sm font-semibold text-white">Node.js / TS</div>
+            <div class="text-[11px] text-slate-400 font-mono">Express, Hapi, REST</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 font-bold text-xs font-mono">Go</div>
+          <div>
+            <div class="text-sm font-semibold text-white">Golang</div>
+            <div class="text-[11px] text-slate-400 font-mono">Goroutines, Microservices</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs font-mono">SQL</div>
+          <div>
+            <div class="text-sm font-semibold text-white">MySQL &amp; Postgres</div>
+            <div class="text-[11px] text-slate-400 font-mono">Query Tuning &amp; Triggers</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 font-bold text-xs font-mono">Redis</div>
+          <div>
+            <div class="text-sm font-semibold text-white">Redis</div>
+            <div class="text-[11px] text-slate-400 font-mono">Pub/Sub, Caching, Locks</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 font-bold text-xs font-mono">Dock</div>
+          <div>
+            <div class="text-sm font-semibold text-white">Docker</div>
+            <div class="text-[11px] text-slate-400 font-mono">Containers, Compose</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs font-mono">Nginx</div>
+          <div>
+            <div class="text-sm font-semibold text-white">Nginx &amp; Linux</div>
+            <div class="text-[11px] text-slate-400 font-mono">Reverse Proxy, SSL, Upstream</div>
+          </div>
+        </div>
+
+        <div class="glow-card p-4 rounded-xl flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs font-mono">API</div>
+          <div>
+            <div class="text-sm font-semibold text-white">OAuth &amp; APIs</div>
+            <div class="text-[11px] text-slate-400 font-mono">Google Cloud, Gmail, Webhooks</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SELECTED PRODUCTION PROJECTS SECTION -->
+    <section id="projects" class="max-w-6xl mx-auto px-4 sm:px-6 mb-24 lg:mb-32">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
         <div>
-          <!-- TODO: Update CV -->
-          <!-- <a class="link-light text-decoration-none fw-medium text-white-50" href="https://drive.google.com/file/d/1pwFMgpaYZmWU79F8uzlomoguRrZF_DwG/view?usp=share_link" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-file-person-fill"></i> Resume
-          </a> -->
-          <a class="link-light text-decoration-none fw-medium text-white-50 mx-3" href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-linkedin"></i> madfauzy
+          <span class="text-xs font-mono text-indigo-400 uppercase tracking-widest block mb-2">// 03. PRODUCTION CODEBASE</span>
+          <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+            Featured Projects
+          </h2>
+          <p class="text-sm sm:text-base text-slate-400 max-w-xl mt-2">
+            Selected web applications and backend systems engineered for production stability and interactive utility.
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0 text-xs font-mono text-slate-400 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+          <span>Verified Deployments</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Project 1: BioLabSite -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-7-biolabsite.png" alt="BioLabSite Preview" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-transparent opacity-80"></div>
+              <span class="absolute top-3 right-3 text-[10px] font-mono bg-indigo-600/90 text-white px-2 py-0.5 rounded shadow">Interactive Lab</span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>BioLabSite</span>
+                <a href="https://biolabsite.my.id/" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Situs pembelajaran interaktif yang menyajikan simulasi kegiatan praktikum biologi laboratorium virtual secara edukatif dan responsif.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Laravel</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">JavaScript</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <a href="https://biolabsite.my.id/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 group-hover:text-indigo-300">
+              <span>Inspect Deployment</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 2: Bookshelf API -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-5-bookshelf-api.png" alt="Bookshelf API Preview" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-transparent opacity-80"></div>
+              <span class="absolute top-3 right-3 text-[10px] font-mono bg-emerald-600/90 text-white px-2 py-0.5 rounded shadow">RESTful API</span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>Bookshelf API</span>
+                <a href="https://bookshelf-api-madfauzy.vercel.app/" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                High-performance CRUD API with strict request validation, structured error codes, payload sanitization, and automated Postman test passing.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Node.js</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Hapi Framework</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">REST API</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <a href="https://bookshelf-api-madfauzy.vercel.app/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 group-hover:text-emerald-300">
+              <span>View Endpoint Live</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 3: H2Online -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-6-h2online.png" alt="H2Online Preview" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-transparent opacity-80"></div>
+              <span class="absolute top-3 right-3 text-[10px] font-mono bg-cyan-600/90 text-white px-2 py-0.5 rounded shadow">E-Commerce System</span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2">H2Online</h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Platform layanan on-demand untuk bisnis pemesanan isi ulang air galon dan inventori air kemasan dengan tracking pesanan real-time.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Laravel</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Order Dispatch</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <span class="text-xs font-mono text-slate-500">Enterprise Internal System</span>
+          </div>
+        </div>
+
+        <!-- Project 4: PD Sinar Rezeki -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-4-pd-sinar-rezeki.png" alt="PD Sinar Rezeki Preview" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-transparent opacity-80"></div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>PD Sinar Rezeki</span>
+                <a href="https://pdsinarrezeki.com/" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Digital catalog portal for hydraulic &amp; industrial hoses, PTO adaptors, and high-pressure fittings with product SKU indexing.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">PHP</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">SEO Schema</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Fast CDN</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <a href="https://pdsinarrezeki.com/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-400 group-hover:text-indigo-300">
+              <span>Visit Website</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 5: eBook Apps -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-3-ebook-apps.png" alt="eBook Apps Preview" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-transparent opacity-80"></div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>eBook Library Apps</span>
+                <a href="https://github.com/madfauzy/eBook-Apps" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Web application to browse, categorize, and read multi-genre digital books with persistent reading state.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">PHP</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">JavaScript</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <a href="https://github.com/madfauzy/eBook-Apps" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 group-hover:text-white">
+              <span>View Source Code</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 6: Streava Verification Core -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-48 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative p-6 flex flex-col justify-center items-center text-center">
+              <div class="w-12 h-12 rounded-xl bg-violet-500/20 border border-violet-500/30 flex items-center justify-center text-violet-400 mb-2">
+                <i data-lucide="key-round" class="w-6 h-6"></i>
+              </div>
+              <span class="text-sm font-bold text-white">OAuth &amp; Gmail Ingestion</span>
+              <span class="text-[11px] font-mono text-emerald-400 mt-1">Live Automation Hub</span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2">Streava OTP Gateway</h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Automated multi-mailbox OAuth sync engine with regex token extractor (4-8 digits), action link parsers, and live customer activity audit trails.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Laravel 13</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Filament v5</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">Google Cloud API</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <span class="text-xs font-mono text-indigo-400">Proprietary Automation Engine</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- WORK EXPERIENCE TIMELINE -->
+    <section id="experience" class="max-w-4xl mx-auto px-4 sm:px-6 mb-24">
+      <div class="mb-12">
+        <span class="text-xs font-mono text-indigo-400 uppercase tracking-widest block mb-2">// 04. TRACK RECORD</span>
+        <h2 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+          Experience &amp; Education
+        </h2>
+      </div>
+
+      <div class="space-y-8 relative before:absolute before:inset-0 before:left-3.5 before:w-px before:bg-white/[0.08]">
+        
+        <!-- Job 1 -->
+        <div class="relative pl-10 group">
+          <span class="absolute left-1.5 top-1.5 w-4 h-4 rounded-full bg-[#060709] border-2 border-indigo-500 group-hover:scale-125 transition-transform"></span>
+          <div class="glow-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+              <h3 class="text-base sm:text-lg font-bold text-white">
+                PT Alfa Rekacipta Kreasi <span class="text-indigo-400 font-normal">(Weekend Inc)</span>
+              </h3>
+              <span class="text-xs font-mono text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded border border-indigo-500/20 w-fit">
+                Mar 2023 — Present
+              </span>
+            </div>
+            <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">Backend Developer</div>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+              Engineered high-throughput REST APIs and CMS architectures. Spearheaded database query optimization, third-party webhook integrations, and modular microservices.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono text-slate-400">
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Laravel</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Lumen</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Node.js</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Express</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">MySQL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Job 2 -->
+        <div class="relative pl-10 group">
+          <span class="absolute left-1.5 top-1.5 w-4 h-4 rounded-full bg-[#060709] border-2 border-slate-600 group-hover:scale-125 transition-transform"></span>
+          <div class="glow-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+              <h3 class="text-base sm:text-lg font-bold text-white">
+                PT Solusi Media Ravel Teknologi <span class="text-slate-400 font-normal">(SMART)</span>
+              </h3>
+              <span class="text-xs font-mono text-slate-400 bg-white/[0.03] px-2.5 py-1 rounded border border-white/[0.08] w-fit">
+                Feb 2022 — Aug 2022
+              </span>
+            </div>
+            <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">Backend Developer Intern</div>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+              Contributed to the core backend for <code class="text-indigo-300">karyanoesantara.id</code> (Kartara), an e-commerce platform dedicated to empowering Indonesian micro and small businesses.
+            </p>
+            <div class="flex flex-wrap gap-2 text-[11px] font-mono text-slate-400">
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">E-Commerce Backend</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Product Catalog</span>
+              <span class="px-2 py-0.5 rounded bg-white/[0.04]">Transaction Logs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="relative pl-10 group">
+          <span class="absolute left-1.5 top-1.5 w-4 h-4 rounded-full bg-[#060709] border-2 border-violet-500 group-hover:scale-125 transition-transform"></span>
+          <div class="glow-card rounded-2xl p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
+              <h3 class="text-base sm:text-lg font-bold text-white">Universitas Mercu Buana</h3>
+              <span class="text-xs font-mono text-violet-300 bg-violet-500/10 px-2.5 py-1 rounded border border-violet-500/20 w-fit">
+                Bachelor of Information Systems
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              Focused on Database Management Systems, Enterprise Systems Architecture, Computer Networks, and Object-Oriented Software Design.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT & FOOTER -->
+    <footer class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 border-t border-white/[0.08]">
+      <div class="grid md:grid-cols-2 gap-8 items-center justify-between pb-12">
+        <div>
+          <h3 class="text-xl font-bold text-white mb-2">Let's build something scalable.</h3>
+          <p class="text-sm text-slate-400 max-w-md">
+            Available for backend engineering roles, database architecture consulting, and high-throughput systems design.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 md:justify-end">
+          <a href="mailto:madfauzy28@gmail.com" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs shadow-lg shadow-indigo-600/20 transition-all">
+            <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+            <span>madfauzy28@gmail.com</span>
           </a>
-          <a class="link-light text-decoration-none fw-medium text-white-50" href="https://github.com/madfauzy" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-github"></i> madfauzy
+          <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] text-white font-medium text-xs transition-all">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="https://github.com/madfauzy" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] text-white font-medium text-xs transition-all">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <span>GitHub</span>
           </a>
         </div>
       </div>
-    </div>
+
+      <div class="py-6 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-4">
+        <div>
+          &copy; 2026 Ahmad Fauzy. Built with Tailwind CSS v4, GSAP &amp; Lenis.
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Server: 152.42.186.208</span>
+          </span>
+          <span>•</span>
+          <span>HTTP/2 ECDSA</span>
+        </div>
+      </div>
+    </footer>
+
   </main>
 
-  <footer class="px-0 py-4 p-sm-4">
-    <div class="container d-flex justify-content-between align-items-center flex-column flex-md-row">
-      <div class="text-white-50">
-        &copy; 2024 Created by
-        <a class="link-light text-decoration-none fw-medium text-white-50" href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noopener noreferrer">Ahmad Fauzy</a>
-      </div>
-      <div class="text-white-50">
-        Built using
-        <a class="link-light text-decoration-none fw-medium text-white-50" href="https://getbootstrap.com/" target="_blank" rel="noopener noreferrer">
-          <i class="bi bi-bootstrap"></i> Bootstrap
-        </a>
-        and Hosted on
-        <a class="link-light text-decoration-none fw-medium text-white-50" href="https://github.com/" target="_blank" rel="noopener noreferrer">
-          <i class="bi bi-github"></i> Github
-        </a>
-      </div>
-    </div>
-  </footer>
+  <!-- ANIMATION SCRIPTS (LENIS + GSAP + MOTION + LUCIDE) -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    // 1. Initialize Lenis Smooth Scrolling
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true,
+      touchMultiplier: 1.5,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Sync Lenis with GSAP ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // 2. Interactive Spotlight Gradient Effect (Follows Mouse Cursor on Cards)
+    document.querySelectorAll('.glow-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // 3. GSAP Hero Entrance & Progressive Scroll Enhancements
+    window.addEventListener('DOMContentLoaded', () => {
+      
+      // Hero Entrance Timeline
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tl.from('#hero h1', { y: 30, opacity: 0, duration: 0.9 })
+        .from('#hero p', { y: 20, opacity: 0, duration: 0.7 }, '-=0.5')
+        .from('#hero .grid > div', { y: 15, opacity: 0, stagger: 0.08, duration: 0.6 }, '-=0.4')
+        .from('.terminal-window', { scale: 0.96, opacity: 0, duration: 0.8, ease: 'back.out(1.2)' }, '-=0.5');
+
+      // Scroll reveals that enhance elements gracefully (never permanently zeroing opacity)
+      gsap.utils.toArray('#architecture .glow-card').forEach((card, idx) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 92%',
+            once: true
+          },
+          y: 25,
+          opacity: 0.3,
+          duration: 0.6,
+          delay: idx * 0.1,
+          ease: 'power2.out'
+        });
+      });
+
+      gsap.utils.toArray('#projects .glow-card').forEach((card, idx) => {
+        gsap.from(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 92%',
+            once: true
+          },
+          y: 25,
+          opacity: 0.3,
+          duration: 0.6,
+          delay: (idx % 3) * 0.1,
+          ease: 'power2.out'
+        });
+      });
+
+      // Recalculate ScrollTrigger metrics
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 500);
+
+      // 4. Motion Spring effect for interactive buttons
+      const buttons = document.querySelectorAll('button, a.rounded-xl, .terminal-window');
+      buttons.forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          if (window.Motion) {
+            Motion.animate(btn, { scale: 1.02 }, { duration: 0.2, easing: [0.34, 1.56, 0.64, 1] });
+          }
+        });
+        btn.addEventListener('mouseleave', () => {
+          if (window.Motion) {
+            Motion.animate(btn, { scale: 1 }, { duration: 0.2 });
+          }
+        });
+      });
+
+    });
+  </script>
+
 </body>
-
 </html>
