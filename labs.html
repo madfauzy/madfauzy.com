@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Engineering Labs &amp; Systems Architecture — Ahmad Fauzy</title>
-  <meta name="description" content="Simulasi visual diagram arsitektur backend: alur request transaksi, Redis caching, dan database MySQL.">
+  <meta name="description" content="Eksplorasi interaktif arsitektur backend, caching terdistribusi, dan benchmark concurrency performa tinggi.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://madfauzy.com/labs">
 
@@ -66,36 +66,156 @@
     .diag-node:hover {
       filter: brightness(1.2);
     }
+
+    /* Goroutine active pulses */
+    @keyframes pulse-worker {
+      0%, 100% { opacity: 0.3; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .worker-active {
+      animation: pulse-worker 0.25s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-[#060709] text-slate-200 font-sans antialiased min-h-screen lg:h-screen lg:max-h-screen blueprint-grid flex flex-col justify-between selection:bg-emerald-500/30 selection:text-white overflow-x-hidden lg:overflow-hidden">
 
-  <!-- NAVBAR (Compact Height) -->
+  <!-- NAVBAR -->
   <header class="border-b border-white/[0.06] bg-[#060709]/90 backdrop-blur-xl sticky top-0 z-50 shrink-0">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-      <a href="/" class="group flex items-center gap-2 text-xs font-mono tracking-tight">
+      <a href="/labs" onclick="switchLab('hub'); return false;" class="group flex items-center gap-2 text-xs font-mono tracking-tight cursor-pointer">
         <span class="text-white group-hover:text-emerald-400 font-bold transition-colors">{ }</span>
         <span class="font-bold text-emerald-400">madfauzy.com</span>
         <span class="text-slate-500">/labs</span>
       </a>
 
-      <!-- Center Subtitle Pill (Desktop) -->
-      <div class="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-white/[0.03] border border-white/[0.08] text-slate-400">
+      <!-- Center Status Badge -->
+      <div id="nav-center-badge" class="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-white/[0.03] border border-white/[0.08] text-slate-400">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span class="text-slate-300 font-medium">Request Lifecycle &amp; Cache Simulator</span>
+        <span id="nav-lab-title" class="text-slate-300 font-medium">Engineering Labs Hub</span>
       </div>
 
-      <a href="/" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
-        <i data-lucide="arrow-left" class="w-3 h-3"></i>
-        <span>Kembali ke Portfolio</span>
-      </a>
+      <div class="flex items-center gap-3">
+        <!-- Back to Hub button (visible when inside a lab) -->
+        <button id="btn-back-hub" onclick="switchLab('hub')" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all cursor-pointer">
+          <i data-lucide="layout-grid" class="w-3 h-3"></i>
+          <span>Pilih Lab Lain</span>
+        </button>
+
+        <a href="/" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
+          <i data-lucide="arrow-left" class="w-3 h-3"></i>
+          <span>Portfolio</span>
+        </a>
+      </div>
     </div>
   </header>
 
-  <!-- MAIN DIAGRAM WORKBENCH -->
-  <main class="max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex flex-col justify-center min-h-0">
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: LABS SELECTOR HUB (Default Landing Screen)                        -->
+  <!-- ========================================================================= -->
+  <main id="view-hub" class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-center min-h-0">
+    
+    <!-- Hub Header -->
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+        <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+        <span>Backend Engineering Labs</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+        Pilih Simulasi Sistem
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mx-auto">
+        Visualisasi interaktif arsitektur backend, distributed caching, dan benchmark performa tinggi. Pilih simulasi yang ingin kamu eksplorasi:
+      </p>
+    </div>
 
-    <!-- ALL-IN-ONE ARCHITECTURAL WORKBENCH CONTAINER -->
+    <!-- 2 Lab Selection Cards -->
+    <div class="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto w-full">
+      
+      <!-- CARD 1: REQUEST LIFECYCLE & CACHE FLOW -->
+      <div onclick="switchLab('cache-flow')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-emerald-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1">
+        
+        <div>
+          <!-- Top Badge & Icon -->
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              LAB 01 • ARCHITECTURE
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="network" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <!-- Title & Description -->
+          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+            Request Lifecycle &amp; Cache Flow
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+            Simulasi visual interaktif alur request kasir (AYO Kasir) melintasi Backend Core, Redis RAM In-Memory, hingga proteksi beban I/O database MySQL Aurora RDS.
+          </p>
+        </div>
+
+        <!-- Metrics Preview Pill -->
+        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2 text-slate-400">
+            <span class="text-emerald-400 font-bold">2.1 ms</span>
+            <span>vs</span>
+            <span class="text-amber-400 font-bold">138 ms</span>
+          </div>
+          <span class="flex items-center gap-1.5 text-emerald-400 font-bold group-hover:translate-x-1 transition-transform">
+            <span>Buka Lab</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- CARD 2: GOLANG CONCURRENCY VS SEQUENTIAL RACE -->
+      <div onclick="switchLab('concurrency-race')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:-translate-y-1">
+        
+        <div>
+          <!-- Top Badge & Icon -->
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+              LAB 02 • CONCURRENCY
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <!-- Title & Description -->
+          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+            Concurrency vs Sequential Race
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+            Adu balap pemrosesan 1,000 tasks paralel: buktikan keunggulan Golang Worker Pool (8 Goroutines) dibanding single-thread sequential loop secara real-time.
+          </p>
+        </div>
+
+        <!-- Metrics Preview Pill -->
+        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2 text-slate-400">
+            <span class="text-cyan-400 font-bold">16.8x Faster</span>
+            <span>•</span>
+            <span class="text-slate-400">1,000 Tasks</span>
+          </div>
+          <span class="flex items-center gap-1.5 text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">
+            <span>Buka Lab</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: LAB 01 - REQUEST LIFECYCLE & CACHE FLOW (Compact 1-Screen)        -->
+  <!-- ========================================================================= -->
+  <main id="view-cache-flow" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+
     <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
       
       <!-- SUBTLE COMPACT CONTROLS BAR -->
@@ -109,45 +229,37 @@
           <span class="text-slate-500 text-[11px] hidden sm:inline">Kasir POS ➔ Go/Laravel ➔ Redis RAM / MySQL</span>
         </div>
 
-        <!-- Right: Sleek Action Controls -->
+        <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
-          
-          <!-- Toggle: Redis Cache Layer -->
           <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
             <span id="cache-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Redis:</span>
             <strong id="cache-status-text" class="text-emerald-400 font-bold">AKTIF</strong>
           </button>
 
-          <!-- Primary Action: Send Request -->
           <button id="btn-fire" onclick="simulatePacket()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 transition-all cursor-pointer">
             <i data-lucide="play" class="w-3 h-3 fill-current"></i>
             <span>Simulasikan</span>
             <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
           </button>
-
         </div>
 
       </div>
 
-      <!-- MIDDLE: HERO SVG DIAGRAM (Maximized ViewBox, Large Bold Diagram) -->
+      <!-- MIDDLE: HERO SVG DIAGRAM -->
       <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
         
         <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
           <defs>
-            <!-- Neon Glow Filter: Emerald -->
             <filter id="glow-emerald" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
-
-            <!-- Neon Glow Filter: Amber -->
             <filter id="glow-amber" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
 
-            <!-- Marker Arrowheads -->
             <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
               <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
             </marker>
@@ -158,174 +270,127 @@
               <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
             </marker>
 
-            <!-- Linear Gradients for Nodes -->
             <linearGradient id="grad-client" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#141c2b" />
               <stop offset="100%" stop-color="#0c121d" />
             </linearGradient>
-
             <linearGradient id="grad-server" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#0e2329" />
               <stop offset="100%" stop-color="#09141a" />
             </linearGradient>
-
             <linearGradient id="grad-redis" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#24131a" />
               <stop offset="100%" stop-color="#140a0f" />
             </linearGradient>
-
             <linearGradient id="grad-mysql" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#111c2b" />
               <stop offset="100%" stop-color="#090f18" />
             </linearGradient>
           </defs>
 
-          <!-- ==================== EXACT PIPELINE PATHS ==================== -->
-
-          <!-- PATH 1: Client POS -> Backend Core -->
+          <!-- PIPELINE PATHS -->
           <g id="pipe-pos-backend">
             <path id="track-pos-backend" d="M 120 220 L 390 220" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
             <path id="flow-pos-backend" class="pipeline-wire" d="M 120 220 L 390 220" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-green)" />
             <text x="255" y="206" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" text-anchor="middle">HTTP POST /sku</text>
           </g>
 
-          <!-- PATH 2: Backend Core -> Redis (Curved Upper Branch) -->
           <g id="pipe-backend-redis">
             <path id="track-backend-redis" d="M 390 220 C 480 220, 540 130, 680 130" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
             <path id="flow-backend-redis" class="pipeline-wire" d="M 390 220 C 480 220, 540 130, 680 130" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-green)" />
             <text x="500" y="155" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" text-anchor="middle">1. Cek Cache</text>
           </g>
 
-          <!-- PATH 3: Redis -> MySQL (Vertical Drop Connector for Cache Miss) -->
           <g id="pipe-redis-mysql">
             <path id="track-redis-mysql" d="M 680 130 L 680 310" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
             <path id="flow-redis-mysql" class="pipeline-wire" d="M 680 130 L 680 310" fill="none" stroke="#334155" stroke-width="3.5" stroke-linecap="round" opacity="0.3" marker-end="url(#arrow-dim)" />
             <text id="label-miss" x="735" y="224" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600" text-anchor="middle">Cache Miss ➔</text>
           </g>
 
-          <!-- PATH 4: Redis -> POS (Overhead Fast Path Return Curve) -->
           <g id="pipe-redis-return">
             <path id="track-redis-pos" d="M 680 130 C 510 45, 250 45, 120 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
             <path id="flow-redis-pos" class="pipeline-wire" d="M 680 130 C 510 45, 250 45, 120 220" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" opacity="0.5" marker-end="url(#arrow-green)" />
             <text id="label-hit-return" x="380" y="58" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" opacity="0.95" text-anchor="middle">⚡ Fast Path: 2ms Response (RAM)</text>
           </g>
 
-          <!-- PATH 5: MySQL -> POS (Underhead Slow Path Return Curve) -->
           <g id="pipe-mysql-return">
             <path id="track-mysql-pos" d="M 680 310 C 510 395, 250 395, 120 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
             <path id="flow-mysql-pos" class="pipeline-wire" d="M 680 310 C 510 395, 250 395, 120 220" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" opacity="0.2" marker-end="url(#arrow-amber)" />
             <text id="label-disk-return" x="380" y="415" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" opacity="0.6" text-anchor="middle">🐢 Slow Path: 138ms Response (InnoDB Disk)</text>
           </g>
 
-          <!-- ==================== ANIMATED GLOWING COMET PACKET ==================== -->
+          <!-- COMET PACKET -->
           <g id="energy-group" opacity="0" style="pointer-events: none;">
-            <!-- Outer Aura -->
             <circle id="packet-aura" cx="0" cy="0" r="15" fill="#10b981" opacity="0.3" filter="url(#glow-emerald)" />
-            <!-- Main Head -->
             <circle id="packet-head" cx="0" cy="0" r="9" fill="#10b981" filter="url(#glow-emerald)" />
-            <!-- Brilliant White Center -->
             <circle cx="0" cy="0" r="4" fill="#ffffff" />
-            <!-- Trailing Tail Particle 1 -->
             <circle id="packet-tail-1" cx="-12" cy="0" r="6" fill="#10b981" opacity="0.75" />
-            <!-- Trailing Tail Particle 2 -->
             <circle id="packet-tail-2" cx="-22" cy="0" r="3.5" fill="#10b981" opacity="0.45" />
           </g>
 
-          <!-- ==================== DIAGRAM NODES ==================== -->
-
-          <!-- NODE 1: CLIENT (POS DEVICE) -->
+          <!-- NODES -->
+          <!-- 1: POS -->
           <g id="node-pos" class="diag-node" transform="translate(120, 220)">
-            <!-- Ripple Pulse Ring -->
             <circle id="ripple-pos" cx="0" cy="0" r="48" fill="none" stroke="#10b981" stroke-width="2" opacity="0" />
-            <!-- Halo & Body -->
             <rect id="halo-pos" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
             <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-client)" stroke="#1e293b" stroke-width="1.5" />
-            
-            <!-- Vector Icon: Mobile POS -->
             <rect x="-18" y="-30" width="36" height="50" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
             <rect x="-14" y="-25" width="28" height="32" rx="2" fill="#1e293b" />
             <line x1="-8" y1="-12" x2="8" y2="-12" stroke="#10b981" stroke-width="1.5" />
             <line x1="-8" y1="-6" x2="4" y2="-6" stroke="#10b981" stroke-width="1.5" />
             <circle cx="0" cy="14" r="2.5" fill="#10b981" />
-
-            <!-- Labels -->
             <text x="0" y="74" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Kasir POS</text>
             <text x="0" y="90" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Merchant Client</text>
           </g>
 
-          <!-- NODE 2: BACKEND (GO / LARAVEL MICROSERVICE) -->
+          <!-- 2: BACKEND -->
           <g id="node-backend" class="diag-node" transform="translate(390, 220)">
-            <!-- Ripple Pulse Ring -->
             <circle id="ripple-backend" cx="0" cy="0" r="48" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
-            <!-- Halo & Body -->
             <rect id="halo-backend" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
             <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-server)" stroke="#1e293b" stroke-width="1.5" />
-
-            <!-- Vector Icon: Server Microchip / Router -->
             <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#082026" stroke="#06b6d4" stroke-width="1.5" />
             <circle cx="0" cy="0" r="9" fill="none" stroke="#06b6d4" stroke-width="2" />
             <circle cx="0" cy="0" r="4" fill="#06b6d4" />
-            <!-- Pin connectors -->
             <line x1="-15" y1="-28" x2="-15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
             <line x1="0" y1="-28" x2="0" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
             <line x1="15" y1="-28" x2="15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
             <line x1="-15" y1="24" x2="-15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
             <line x1="0" y1="24" x2="0" y2="28" stroke="#06b6d4" stroke-width="1.5" />
             <line x1="15" y1="24" x2="15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
-
-            <!-- Labels -->
             <text x="0" y="74" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Backend Core</text>
             <text x="0" y="90" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Go / Laravel App</text>
           </g>
 
-          <!-- NODE 3: REDIS CLUSTER (IN-MEMORY RAM) -->
+          <!-- 3: REDIS -->
           <g id="node-redis" class="diag-node" transform="translate(680, 130)">
-            <!-- Ripple Pulse Ring -->
             <circle id="ripple-redis" cx="0" cy="0" r="50" fill="none" stroke="#10b981" stroke-width="2" opacity="0" />
-            <!-- Halo & Body -->
             <rect id="halo-redis" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#10b981" stroke-width="2" />
             <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-redis)" stroke="#e11d48" stroke-width="1.5" />
-
-            <!-- Vector Icon: Hexagonal Lightning RAM Cache -->
             <polygon points="0,-22 20,-11 20,11 0,22 -20,11 -20,-11" fill="#2d0f19" stroke="#f43f5e" stroke-width="1.5" />
             <path d="M 2 -12 L -7 1 L 1 1 L -2 12 L 7 -1 L -1 -1 Z" fill="#fb7185" />
-
-            <!-- Labels -->
             <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Redis Cache</text>
             <text id="node-redis-sub" x="0" y="76" fill="#10b981" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="10" text-anchor="middle">In-Memory RAM O(1)</text>
           </g>
 
-          <!-- NODE 4: MYSQL DATABASE (DISK STORAGE) -->
+          <!-- 4: MYSQL -->
           <g id="node-mysql" class="diag-node" transform="translate(680, 310)">
-            <!-- Ripple Pulse Ring -->
             <circle id="ripple-mysql" cx="0" cy="0" r="50" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0" />
-            <!-- Halo & Body -->
             <rect id="halo-mysql" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#334155" stroke-width="2" />
             <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-mysql)" stroke="#1e293b" stroke-width="1.5" />
-
-            <!-- Vector Icon: Database Cylinder -->
             <g transform="translate(0, -6)">
-              <!-- Top Ellipse -->
               <ellipse cx="0" cy="-14" rx="20" ry="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
-              <!-- Middle Cylinder Segment -->
               <path d="M -20 -14 L -20 0 A 20 6 0 0 0 20 0 L 20 -14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
-              <!-- Bottom Cylinder Segment -->
               <path d="M -20 0 L -20 14 A 20 6 0 0 0 20 14 L 20 0" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
             </g>
-
-            <!-- Labels -->
             <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">MySQL Aurora RDS</text>
             <text id="node-mysql-sub" x="0" y="76" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">InnoDB Disk Storage</text>
           </g>
-
         </svg>
 
       </div>
 
-      <!-- BOTTOM ROW: REFINED TELEMETRY & METRIC BADGES -->
+      <!-- BOTTOM ROW: REFINED TELEMETRY -->
       <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
-        
-        <!-- Live Status Narrative -->
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="flow-indicator-light"></span>
           <span id="flow-narrative" class="text-slate-400">
@@ -333,7 +398,6 @@
           </span>
         </div>
 
-        <!-- High-Visibility Live Result Metrics -->
         <div class="flex items-center gap-2 shrink-0">
           <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
             <span class="text-slate-500">Latency:</span>
@@ -344,6 +408,159 @@
             <strong id="val-db-load" class="text-emerald-400 font-bold text-xs">0 IOPS (Idle)</strong>
           </div>
         </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY VS SEQUENTIAL RACE                    -->
+  <!-- ========================================================================= -->
+  <main id="view-concurrency-race" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+      
+      <!-- TOP CONTROL & TITLE BAR -->
+      <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-white/[0.06] shrink-0 font-mono">
+        
+        <!-- Left: Route Info -->
+        <div class="flex items-center gap-2 text-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+          <span class="text-white font-semibold">/concurrency-race</span>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <span class="text-slate-500 text-[11px] hidden sm:inline">Golang Worker Pool vs Single-Thread Loop</span>
+        </div>
+
+        <!-- Right: Controls -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Task Count Selector -->
+          <div class="hidden sm:flex items-center gap-1 bg-white/[0.03] border border-white/10 rounded-lg p-0.5 text-[11px]">
+            <button onclick="setTaskCount(500)" id="btn-task-500" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">500</button>
+            <button onclick="setTaskCount(1000)" id="btn-task-1000" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 transition-all">1,000</button>
+            <button onclick="setTaskCount(2000)" id="btn-task-2000" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all">2,000</button>
+          </div>
+
+          <!-- Action Button: Start Race -->
+          <button id="btn-start-race" onclick="startConcurrencyRace()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+            <span>Mulai Balapan</span>
+            <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- MIDDLE: TWIN RACE TRACKS -->
+      <div class="flex-1 flex flex-col justify-center gap-4 sm:gap-5 my-2 min-h-0 overflow-y-auto">
+        
+        <!-- TRACK 1: SEQUENTIAL WORKER (SINGLE-THREAD) -->
+        <div class="bg-black/40 border border-white/[0.06] rounded-xl p-3 sm:p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs sm:text-sm font-bold text-white">Sequential Execution</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                    Single Thread (Blocking Loop)
+                  </span>
+                </div>
+                <div class="text-[11px] font-mono text-slate-500">
+                  1 Worker Thread • Menunggu tiap task selesai satu per satu
+                </div>
+              </div>
+            </div>
+
+            <!-- Timer & Counter -->
+            <div class="text-right font-mono">
+              <div id="seq-timer" class="text-sm sm:text-base font-bold text-amber-400">0.00s</div>
+              <div id="seq-count" class="text-[11px] text-slate-500">0 / 1,000 tasks</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar Track -->
+          <div class="w-full h-3 bg-white/[0.04] border border-white/[0.08] rounded-full overflow-hidden p-0.5">
+            <div id="seq-progress-bar" class="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full w-0 transition-all duration-75"></div>
+          </div>
+        </div>
+
+        <!-- TRACK 2: GOLANG CONCURRENCY (WORKER POOL - 8 GOROUTINES) -->
+        <div class="bg-black/40 border border-cyan-500/20 rounded-xl p-3 sm:p-4 shadow-[0_0_20px_rgba(6,182,212,0.06)]">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs sm:text-sm font-bold text-white">Golang Worker Pool</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    8 Goroutines (Concurrent)
+                  </span>
+                </div>
+                <div class="text-[11px] font-mono text-slate-400">
+                  Channel Queue • 8 micro-threads memproses antrian serentak
+                </div>
+              </div>
+            </div>
+
+            <!-- Timer & Counter -->
+            <div class="text-right font-mono">
+              <div id="go-timer" class="text-sm sm:text-base font-bold text-cyan-400">0.00s</div>
+              <div id="go-count" class="text-[11px] text-slate-400">0 / 1,000 tasks</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar Track -->
+          <div class="w-full h-3 bg-white/[0.04] border border-cyan-500/30 rounded-full overflow-hidden p-0.5 mb-3">
+            <div id="go-progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full w-0 shadow-[0_0_12px_rgba(6,182,212,0.8)] transition-all duration-75"></div>
+          </div>
+
+          <!-- 8 Active Goroutine Visual Indicators -->
+          <div class="flex items-center justify-between gap-1 sm:gap-2 pt-2 border-t border-white/[0.06] font-mono text-[10px]">
+            <span class="text-slate-500 hidden sm:inline">Active Workers:</span>
+            <div class="flex items-center gap-1 sm:gap-1.5 flex-1 justify-around sm:justify-start">
+              <div id="worker-1" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G1</div>
+              <div id="worker-2" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G2</div>
+              <div id="worker-3" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G3</div>
+              <div id="worker-4" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G4</div>
+              <div id="worker-5" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G5</div>
+              <div id="worker-6" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G6</div>
+              <div id="worker-7" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G7</div>
+              <div id="worker-8" class="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-slate-400 transition-all">G8</div>
+            </div>
+            <span id="worker-status-badge" class="px-2 py-0.5 rounded bg-white/[0.04] text-slate-400">Idle</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- BOTTOM ROW: RACE RESULT TELEMETRY -->
+      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
+        
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0" id="race-indicator-light"></span>
+          <span id="race-narrative" class="text-slate-400">
+            Sistem Standby. Tekan <strong>"Mulai Balapan"</strong> untuk mengeksekusi benchmark.
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">Speedup:</span>
+            <strong id="val-speedup" class="text-cyan-400 font-bold text-xs">-</strong>
+          </div>
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">Go Throughput:</span>
+            <strong id="val-throughput" class="text-emerald-400 font-bold text-xs">-</strong>
+          </div>
+        </div>
 
       </div>
 
@@ -351,7 +568,7 @@
 
   </main>
 
-  <!-- FOOTER (Ultra Compact) -->
+  <!-- FOOTER -->
   <footer class="border-t border-white/[0.06] py-2 text-center text-[11px] font-mono text-slate-500 shrink-0">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
       <span>{ } madfauzy.com • Backend Engineering Labs</span>
@@ -363,21 +580,92 @@
     </div>
   </footer>
 
-  <!-- GSAP SIMULATION ENGINE WITH MOTIONPATH PLUGIN -->
+  <!-- SCRIPT ENGINE: VIEW ROUTER + SIMULATION CONTROLLERS -->
   <script>
     // Register official GSAP MotionPathPlugin
     if (window.MotionPathPlugin) {
       gsap.registerPlugin(MotionPathPlugin);
     }
 
+    let currentLab = 'hub';
     let redisEnabled = true;
-    let isBusy = false;
+    let isBusyPacket = false;
+    let isBusyRace = false;
+    let raceTaskCount = 1000;
 
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
+      handleHashRoute();
     });
 
-    // Helper: Trigger ripple ring on a node
+    window.addEventListener('hashchange', () => {
+      handleHashRoute();
+    });
+
+    // Hash Router
+    function handleHashRoute() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'cache-flow' || hash === 'concurrency-race') {
+        switchLab(hash, false);
+      } else {
+        switchLab('hub', false);
+      }
+    }
+
+    // View Switcher Function
+    function switchLab(targetLab, updateHash = true) {
+      if (currentLab === targetLab) return;
+      currentLab = targetLab;
+
+      if (updateHash) {
+        if (targetLab === 'hub') {
+          history.pushState(null, '', '/labs');
+        } else {
+          window.location.hash = targetLab;
+        }
+      }
+
+      const viewHub = document.getElementById('view-hub');
+      const viewCache = document.getElementById('view-cache-flow');
+      const viewRace = document.getElementById('view-concurrency-race');
+      const btnBackHub = document.getElementById('btn-back-hub');
+      const navLabTitle = document.getElementById('nav-lab-title');
+
+      // Hide all
+      [viewHub, viewCache, viewRace].forEach(v => {
+        v.classList.add('hidden');
+        v.classList.remove('flex');
+      });
+
+      if (targetLab === 'hub') {
+        viewHub.classList.remove('hidden');
+        viewHub.classList.add('flex');
+        btnBackHub.classList.add('hidden');
+        btnBackHub.classList.remove('flex');
+        navLabTitle.textContent = "Engineering Labs Hub";
+        gsap.fromTo(viewHub, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 });
+      } else if (targetLab === 'cache-flow') {
+        viewCache.classList.remove('hidden');
+        viewCache.classList.add('flex');
+        btnBackHub.classList.remove('hidden');
+        btnBackHub.classList.add('flex');
+        navLabTitle.textContent = "Lab 01: Request Lifecycle & Cache";
+        gsap.fromTo(viewCache, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
+      } else if (targetLab === 'concurrency-race') {
+        viewRace.classList.remove('hidden');
+        viewRace.classList.add('flex');
+        btnBackHub.classList.remove('hidden');
+        btnBackHub.classList.add('flex');
+        navLabTitle.textContent = "Lab 02: Golang Concurrency vs Sequential";
+        gsap.fromTo(viewRace, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================================
+    // LAB 01 CONTROLLERS: REQUEST LIFECYCLE & CACHE
+    // =========================================================================
     function pulseRipple(nodeId, color) {
       const ripple = document.getElementById(`ripple-${nodeId}`);
       if (!ripple) return;
@@ -388,9 +676,8 @@
       );
     }
 
-    // Toggle Redis Active State
     function toggleRedisCache() {
-      if (isBusy) return;
+      if (isBusyPacket) return;
       redisEnabled = !redisEnabled;
 
       const btn = document.getElementById('btn-toggle-redis');
@@ -443,10 +730,9 @@
       }
     }
 
-    // Packet Motion Simulation Riding Exact Paths
     function simulatePacket() {
-      if (isBusy) return;
-      isBusy = true;
+      if (isBusyPacket) return;
+      isBusyPacket = true;
 
       const energyGroup = document.getElementById('energy-group');
       const head = document.getElementById('packet-head');
@@ -463,12 +749,10 @@
       const valLatency = document.getElementById('val-latency');
       const valDb = document.getElementById('val-db-load');
 
-      // Reset Halos
       [haloPos, haloBackend, haloRedis, haloMysql].forEach(h => {
         h.setAttribute('filter', '');
       });
 
-      // Default green styling
       head.setAttribute('fill', '#10b981');
       aura.setAttribute('fill', '#10b981');
       aura.setAttribute('filter', 'url(#glow-emerald)');
@@ -480,14 +764,12 @@
 
       const tl = gsap.timeline({
         onComplete: () => {
-          isBusy = false;
+          isBusyPacket = false;
         }
       });
 
-      // Show packet
       tl.set(energyGroup, { opacity: 1 });
 
-      // STAGE 1: Travel on Path 1 (POS -> Backend: straight line)
       tl.to(haloPos, { duration: 0.1, onStart: () => {
         haloPos.setAttribute('stroke', '#10b981');
         pulseRipple('pos', '#10b981');
@@ -506,7 +788,6 @@
 
       tl.to(haloPos, { duration: 0.05, onComplete: () => haloPos.setAttribute('stroke', '#334155') });
 
-      // STAGE 2: Arrive at Backend
       tl.to(haloBackend, { duration: 0.1, onStart: () => {
         haloBackend.setAttribute('stroke', '#06b6d4');
         pulseRipple('backend', '#06b6d4');
@@ -514,8 +795,6 @@
       }});
 
       if (redisEnabled) {
-        // ================= SCENARIO A: REDIS CACHE HIT =================
-        // Travel on Path 2 (Backend -> Redis: upward curve)
         tl.to(energyGroup, {
           duration: 0.65,
           ease: "power1.inOut",
@@ -529,7 +808,6 @@
 
         tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
 
-        // Arrive at Redis (Hit!)
         tl.to(haloRedis, { duration: 0.15, onStart: () => {
           haloRedis.setAttribute('stroke', '#10b981');
           haloRedis.setAttribute('filter', 'url(#glow-emerald)');
@@ -537,7 +815,6 @@
           narrative.innerHTML = "<strong class='text-emerald-400'>⚡ CACHE HIT!</strong> Data ditemukan di RAM. Langsung kembali lewat Fast Path!";
         }});
 
-        // Travel on Path 4: Redis -> POS (Overhead fast curve!)
         tl.to(energyGroup, {
           duration: 0.8,
           ease: "power2.inOut",
@@ -554,7 +831,6 @@
           haloRedis.setAttribute('stroke', '#10b981');
         }});
 
-        // Arrive back at POS
         tl.to(haloPos, { duration: 0.15, onStart: () => {
           haloPos.setAttribute('stroke', '#10b981');
           pulseRipple('pos', '#10b981');
@@ -573,8 +849,6 @@
         }});
 
       } else {
-        // ================= SCENARIO B: CACHE MISS / BYPASS =================
-        // Travel on Path 2 to Redis first (color changes to amber)
         tl.to(energyGroup, {
           duration: 0.65,
           ease: "power1.inOut",
@@ -595,13 +869,11 @@
 
         tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
 
-        // Arrive at Redis (Miss detected)
         tl.to(haloRedis, { duration: 0.15, onStart: () => {
           pulseRipple('redis', '#f59e0b');
           narrative.innerHTML = "<strong class='text-amber-400'>⚠️ CACHE MISS!</strong> Cache tidak aktif. Terpaksa dialirkan ke Database...";
         }});
 
-        // Travel on Path 3: Drop vertically from Redis to MySQL
         tl.to(energyGroup, {
           duration: 0.5,
           ease: "power1.inOut",
@@ -613,7 +885,6 @@
           }
         });
 
-        // Arrive at MySQL (Disk read)
         tl.to(haloMysql, { duration: 0.2, onStart: () => {
           haloMysql.setAttribute('stroke', '#f59e0b');
           haloMysql.setAttribute('filter', 'url(#glow-amber)');
@@ -621,10 +892,8 @@
           narrative.innerHTML = "3. <strong class='text-amber-400'>MySQL Disk Read:</strong> Menjalankan InnoDB Query...";
         }});
 
-        // Delay for simulated disk read
         tl.to({}, { duration: 0.5 });
 
-        // Travel on Path 5: MySQL -> POS (Underhead slow curve!)
         tl.to(energyGroup, {
           duration: 0.9,
           ease: "power2.inOut",
@@ -641,7 +910,6 @@
           haloMysql.setAttribute('stroke', '#334155');
         }});
 
-        // Arrive back at POS
         tl.to(haloPos, { duration: 0.15, onStart: () => {
           haloPos.setAttribute('stroke', '#f59e0b');
           pulseRipple('pos', '#f59e0b');
@@ -661,11 +929,150 @@
       }
     }
 
-    // Spacebar trigger
+    // =========================================================================
+    // LAB 02 CONTROLLERS: GOLANG CONCURRENCY VS SEQUENTIAL RACE
+    // =========================================================================
+    function setTaskCount(n) {
+      if (isBusyRace) return;
+      raceTaskCount = n;
+      ['500', '1000', '2000'].forEach(val => {
+        const btn = document.getElementById(`btn-task-${val}`);
+        if (parseInt(val) === n) {
+          btn.className = "px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30 transition-all";
+        } else {
+          btn.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white transition-all";
+        }
+      });
+      document.getElementById('seq-count').innerText = `0 / ${n.toLocaleString()} tasks`;
+      document.getElementById('go-count').innerText = `0 / ${n.toLocaleString()} tasks`;
+      document.getElementById('seq-progress-bar').style.width = '0%';
+      document.getElementById('go-progress-bar').style.width = '0%';
+      document.getElementById('seq-timer').innerText = '0.00s';
+      document.getElementById('go-timer').innerText = '0.00s';
+      document.getElementById('val-speedup').innerText = '-';
+      document.getElementById('val-throughput').innerText = '-';
+    }
+
+    function startConcurrencyRace() {
+      if (isBusyRace) return;
+      isBusyRace = true;
+
+      const btn = document.getElementById('btn-start-race');
+      btn.classList.add('opacity-50', 'pointer-events-none');
+
+      const narrative = document.getElementById('race-narrative');
+      const light = document.getElementById('race-indicator-light');
+      const seqBar = document.getElementById('seq-progress-bar');
+      const goBar = document.getElementById('go-progress-bar');
+      const seqTimer = document.getElementById('seq-timer');
+      const goTimer = document.getElementById('go-timer');
+      const seqCount = document.getElementById('seq-count');
+      const goCount = document.getElementById('go-count');
+      const valSpeedup = document.getElementById('val-speedup');
+      const valThroughput = document.getElementById('val-throughput');
+      const workerStatus = document.getElementById('worker-status-badge');
+
+      // Reset
+      seqBar.style.width = '0%';
+      goBar.style.width = '0%';
+      seqTimer.innerText = '0.00s';
+      goTimer.innerText = '0.00s';
+      light.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0";
+      narrative.innerHTML = `Mengeksekusi <strong>${raceTaskCount.toLocaleString()} concurrent tasks</strong>... Perhatikan lonjakan Goroutines!`;
+
+      // Activate Goroutine worker LEDs
+      workerStatus.innerText = "8 Goroutines Busy";
+      workerStatus.className = "px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 animate-pulse";
+      for (let i = 1; i <= 8; i++) {
+        const w = document.getElementById(`worker-${i}`);
+        w.className = "px-2 py-0.5 rounded bg-cyan-500/25 border border-cyan-400 text-cyan-200 font-bold worker-active";
+      }
+
+      const totalTasks = raceTaskCount;
+      const startTime = performance.now();
+
+      // Golang finishes in ~0.20s
+      const goDuration = totalTasks === 500 ? 110 : (totalTasks === 1000 ? 185 : 340); // ms
+      // Sequential finishes in ~3.1s
+      const seqDuration = totalTasks === 500 ? 1600 : (totalTasks === 1000 ? 3150 : 6100); // ms
+
+      let goDone = false;
+      let seqDone = false;
+      let goFinalTime = 0;
+
+      // Animation Loop for Smooth Race Progress
+      const raceInterval = setInterval(() => {
+        const now = performance.now();
+        const elapsed = now - startTime;
+
+        // Update Golang
+        if (!goDone) {
+          const goProgress = Math.min(1, elapsed / goDuration);
+          const currentGoTasks = Math.floor(goProgress * totalTasks);
+          goBar.style.width = `${goProgress * 100}%`;
+          goCount.innerText = `${currentGoTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks`;
+          goTimer.innerText = `${(elapsed / 1000).toFixed(2)}s`;
+
+          if (goProgress >= 1) {
+            goDone = true;
+            goFinalTime = (elapsed / 1000).toFixed(2);
+            goTimer.innerText = `${goFinalTime}s`;
+            goBar.style.width = '100%';
+            goCount.innerText = `${totalTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks (DONE!)`;
+            
+            // Turn off Goroutine pulsing
+            workerStatus.innerText = "8 Goroutines Idle (Completed)";
+            workerStatus.className = "px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/40";
+            for (let i = 1; i <= 8; i++) {
+              const w = document.getElementById(`worker-${i}`);
+              w.className = "px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-300";
+            }
+
+            const rps = Math.round(totalTasks / (elapsed / 1000));
+            valThroughput.innerText = `${rps.toLocaleString()} tasks/s`;
+            narrative.innerHTML = `<strong class='text-cyan-300'>⚡ GOLANG SELESAI DALAM ${goFinalTime}s!</strong> Sequential masih berjalan lambat...`;
+          }
+        }
+
+        // Update Sequential
+        if (!seqDone) {
+          const seqProgress = Math.min(1, elapsed / seqDuration);
+          const currentSeqTasks = Math.floor(seqProgress * totalTasks);
+          seqBar.style.width = `${seqProgress * 100}%`;
+          seqCount.innerText = `${currentSeqTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks`;
+          seqTimer.innerText = `${(elapsed / 1000).toFixed(2)}s`;
+
+          if (seqProgress >= 1) {
+            seqDone = true;
+            clearInterval(raceInterval);
+            const seqFinalTime = (elapsed / 1000).toFixed(2);
+            seqTimer.innerText = `${seqFinalTime}s`;
+            seqBar.style.width = '100%';
+            seqCount.innerText = `${totalTasks.toLocaleString()} / ${totalTasks.toLocaleString()} tasks (DONE)`;
+
+            const speedupRatio = (seqDuration / goDuration).toFixed(1);
+            valSpeedup.innerText = `${speedupRatio}x Lebih Cepat`;
+            valSpeedup.className = "text-cyan-400 font-bold text-xs";
+
+            light.className = "w-2 h-2 rounded-full bg-emerald-400 shrink-0";
+            narrative.innerHTML = `🏁 <strong>Balapan Selesai!</strong> Golang Worker Pool <strong class='text-cyan-300'>${speedupRatio}x lebih cepat</strong> (${goFinalTime}s vs ${seqFinalTime}s).`;
+
+            btn.classList.remove('opacity-50', 'pointer-events-none');
+            isBusyRace = false;
+          }
+        }
+      }, 16);
+    }
+
+    // Global keyboard Space trigger for active lab
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space' && e.target === document.body) {
         e.preventDefault();
-        simulatePacket();
+        if (currentLab === 'cache-flow') {
+          simulatePacket();
+        } else if (currentLab === 'concurrency-race') {
+          startConcurrencyRace();
+        }
       }
     });
   </script>
