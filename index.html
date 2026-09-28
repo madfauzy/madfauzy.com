@@ -646,6 +646,10 @@
                 </li>
                 <li class="flex items-start gap-2">
                   <span class="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
+                  <span><strong class="text-white font-medium">IQOS PD Tool:</strong> Engineered product distribution workflows, partner dealer authentication, and inventory allocation APIs for the Philip Morris International / SRC network (<a href="https://pd-tool.src.id" target="_blank" rel="noreferrer" class="underline text-neutral-300 hover:text-white transition-colors">pd-tool.src.id</a>).</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
                   <span><strong class="text-white font-medium">AYO Qoncierge:</strong> Architected merchant concierge workflows, order processing microservices, and third-party webhook integrations with robust data validation.</span>
                 </li>
                 <li class="flex items-start gap-2">
@@ -656,6 +660,7 @@
               <div class="flex flex-wrap gap-2 text-[11px] font-mono text-slate-400">
                 <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">AYO Ecosystem</span>
                 <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">AYO Kasir</span>
+                <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">IQOS PD Tool</span>
                 <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">AYO Qoncierge</span>
                 <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">AWS (Lambda, ECS, RDS)</span>
                 <span class="px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300">Docker &amp; Jenkins</span>
@@ -757,47 +762,80 @@
       <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
 
         <!-- Project 1: AYO Kasir (SRC) - Enterprise Flagship -->
-        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group md:col-span-2 bg-[#070a0f] border border-white/10 hover:border-red-500/40 transition-all duration-300">
-          <div class="grid md:grid-cols-12 items-center">
-            <div class="md:col-span-5 h-56 md:h-full min-h-[220px] overflow-hidden bg-slate-900 border-b md:border-b-0 md:border-r border-white/[0.08] relative flex items-center justify-center">
-              <img src="assets/img/project-ayo-kasir-banner.png" alt="AYO Kasir by SRC Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-black/40 opacity-70"></div>
-              <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 text-[10px] font-mono font-medium bg-[#060709]/95 border border-red-500/30 text-red-300 px-2.5 py-1 rounded-md shadow-[0_4px_20px_rgba(0,0,0,0.8)] backdrop-blur-md">
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-52 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-ayo-kasir-banner.png" alt="AYO Kasir by SRC Preview" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-black/50 opacity-90"></div>
+              <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 text-[10px] font-mono font-medium bg-[#060709]/95 border border-red-500/30 text-red-300 px-2.5 py-1 rounded-md shadow-[0_4px_20px_rgba(0,0,0,0.8)] backdrop-blur-md">
                 <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>
-                <span>100K+ Downloads • Play Store</span>
+                <span>100K+ Downloads</span>
               </span>
             </div>
-            <div class="md:col-span-7 p-6 sm:p-8 flex flex-col justify-between h-full">
-              <div>
-                <div class="flex items-center justify-between gap-4 mb-2">
-                  <h3 class="text-xl sm:text-2xl font-bold text-white group-hover:text-red-300 transition-colors">
-                    AYO Kasir (by SRC)
-                  </h3>
-                  <a href="https://play.google.com/store/apps/details?id=com.pmi.limited.PMIAPPM05983" target="_blank" rel="noreferrer" class="p-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.1] text-slate-400 hover:text-white transition-all">
-                    <i data-lucide="external-link" class="w-4 h-4"></i>
-                  </a>
-                </div>
-                <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-5">
-                  Point-of-sale mobile application for retail store owners, powering real-time checkout transactions, barcode SKU scanning, inventory sync, and digital payment tracking across nationwide merchant networks.
-                </p>
-                <div class="flex flex-wrap gap-2 mb-6">
-                  <span class="text-[11px] font-mono px-2.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">PHP &amp; Laravel</span>
-                  <span class="text-[11px] font-mono px-2.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">REST APIs</span>
-                  <span class="text-[11px] font-mono px-2.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL &amp; Redis</span>
-                  <span class="text-[11px] font-mono px-2.5 py-0.5 rounded bg-red-500/10 border border-red-500/30 text-red-300">Google Play Store</span>
-                </div>
-              </div>
-              <div>
-                <a href="https://play.google.com/store/apps/details?id=com.pmi.limited.PMIAPPM05983" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-mono font-bold text-red-400 hover:text-red-300 transition-colors">
-                  <span>View on Google Play Store</span>
-                  <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1.5 transition-transform"></i>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>AYO Kasir (by SRC)</span>
+                <a href="https://play.google.com/store/apps/details?id=com.pmi.limited.PMIAPPM05983" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
                 </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Point-of-sale mobile application for retail store owners, powering real-time checkout transactions, barcode SKU scanning, inventory sync, and digital payments across nationwide merchant networks.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">PHP &amp; Laravel</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">REST APIs</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL &amp; Redis</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-red-500/15 border border-red-500/30 text-red-300">Google Play</span>
               </div>
             </div>
           </div>
+          <div class="p-6 pt-0">
+            <a href="https://play.google.com/store/apps/details?id=com.pmi.limited.PMIAPPM05983" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-mono font-bold text-red-400 hover:text-red-300 transition-colors">
+              <span>View on Google Play Store</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
         </div>
 
-        <!-- Project 2: BioLabSite -->
+        <!-- Project 2: IQOS PD Tool - Enterprise Distribution -->
+        <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
+          <div>
+            <div class="h-52 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
+              <img src="assets/img/project-iqos-pd-tool-banner.png" alt="IQOS PD Tool Preview" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0e1117] via-transparent to-black/50 opacity-90"></div>
+              <span class="absolute top-3 right-3 inline-flex items-center gap-1.5 text-[10px] font-mono font-medium bg-[#060709]/95 border border-cyan-500/30 text-cyan-300 px-2.5 py-1 rounded-md shadow-[0_4px_20px_rgba(0,0,0,0.8)] backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span>Enterprise Portal</span>
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-bold text-white mb-2 flex items-center justify-between">
+                <span>IQOS PD Tool</span>
+                <a href="https://pd-tool.src.id" target="_blank" rel="noreferrer" class="text-slate-400 hover:text-white transition-colors">
+                  <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
+                Enterprise product distribution and inventory management portal for Philip Morris International / SRC partner dealers, managing trade orders, dealer authentication, and partner fulfillment pipelines.
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">PHP &amp; Laravel</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">REST APIs</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.08] text-slate-300">MySQL</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/15 border border-cyan-500/30 text-cyan-300">pd-tool.src.id</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-6 pt-0">
+            <a href="https://pd-tool.src.id" target="_blank" rel="noreferrer" class="inline-flex items-center gap-2 text-xs font-mono font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
+              <span>Visit pd-tool.src.id</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project 3: BioLabSite -->
         <div class="glow-card rounded-2xl overflow-hidden flex flex-col justify-between group">
           <div>
             <div class="h-52 overflow-hidden bg-slate-900 border-b border-white/[0.08] relative">
