@@ -48,6 +48,29 @@
       background: rgba(16, 185, 129, 0.35);
       color: #ffffff;
     }
+
+    /* Custom Sleek Minimalist Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060709;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1f2937;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background-color 0.2s ease;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #1f2937 #060709;
+    }
+
     html.lenis, html.lenis body {
       height: auto;
     }
@@ -181,6 +204,9 @@
 
     </div>
   </header>
+
+  <!-- Realtime Scroll Progress Hairline -->
+  <div id="scroll-progress-bar" class="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-300 z-[100] origin-left scale-x-0 pointer-events-none transition-transform duration-75"></div>
 
   <!-- Main Content Wrapper -->
   <main class="relative z-10 pt-28 sm:pt-32 pb-24">
@@ -763,28 +789,34 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
-    // 1. Initialize Lenis Smooth Scrolling
+    // 1. Initialize Lenis Smooth Kinetic Scrolling
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
+      gestureOrientation: 'vertical',
       smoothWheel: true,
+      wheelMultiplier: 1.05,
       touchMultiplier: 1.5,
+      infinite: false,
     });
+    window.lenis = lenis;
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    // Sync Lenis with GSAP ScrollTrigger
+    // Single unified RAF sync via GSAP ticker
     gsap.registerPlugin(ScrollTrigger);
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
     gsap.ticker.lagSmoothing(0);
+
+    // Realtime Scroll Progress Hairline Tracking
+    const progressBar = document.getElementById('scroll-progress-bar');
+    lenis.on('scroll', (e) => {
+      if (progressBar && typeof e.progress === 'number') {
+        progressBar.style.transform = `scaleX(${e.progress})`;
+      }
+    });
 
     // 2. Interactive Spotlight Gradient Effect (Follows Mouse Cursor on Cards)
     document.querySelectorAll('.glow-card').forEach(card => {
@@ -874,15 +906,18 @@
         });
       }
 
-      navLinks.forEach(link => {
+      // Smooth kinetic scrolling for ALL internal anchor links via Lenis
+      document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const targetId = link.getAttribute('data-target');
-          const targetEl = document.getElementById(targetId);
+          const href = link.getAttribute('href');
+          if (!href || href === '#') return;
+          const targetEl = document.querySelector(href);
           if (targetEl) {
-            updateActiveNav(targetId);
+            e.preventDefault();
+            const targetId = targetEl.id;
+            if (targetId) updateActiveNav(targetId);
             if (window.lenis) {
-              lenis.scrollTo(targetEl, { offset: -90, duration: 1.2 });
+              window.lenis.scrollTo(targetEl, { offset: -80, duration: 1.25 });
             } else {
               targetEl.scrollIntoView({ behavior: 'smooth' });
             }
