@@ -904,6 +904,21 @@
 
   </main>
 
+  <!-- MOBILE FLOATING BOTTOM DOCK (Visible on < md) -->
+  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 md:hidden pointer-events-auto">
+    <nav class="flex items-center gap-1 bg-[#090d14]/90 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(16,185,129,0.12)] px-2.5 py-1.5 rounded-full text-[11px] font-mono text-slate-300">
+      <a href="#hero" data-target="hero" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-medium">home</a>
+      <a href="#architecture" data-target="architecture" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white">arch</a>
+      <a href="#stack" data-target="stack" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white">stack</a>
+      <a href="#experience" data-target="experience" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white">exp</a>
+      <a href="#projects" data-target="projects" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white">works</a>
+      <a href="/playground" class="px-2.5 py-1 rounded-full transition-all duration-200 text-slate-300 hover:text-emerald-400 flex items-center gap-1 bg-white/[0.05] border border-white/[0.08]">
+        <span>lab</span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      </a>
+    </nav>
+  </div>
+
   <!-- ANIMATION SCRIPTS (LENIS + GSAP + MOTION + LUCIDE) -->
   <script>
     // Initialize Lucide Icons
@@ -1010,6 +1025,7 @@
 
       // 5. Dynamic Navbar Active Color (Click & ScrollSpy)
       const navLinks = document.querySelectorAll('.nav-item');
+      const mobileNavLinks = document.querySelectorAll('.mobile-nav-item');
       const targetIds = ['hero', 'architecture', 'stack', 'experience', 'projects'];
       const sectionElements = targetIds.map(id => document.getElementById(id)).filter(Boolean);
       let currentActiveSection = 'hero';
@@ -1022,6 +1038,14 @@
             link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 font-medium shadow-xs';
           } else {
             link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]';
+          }
+        });
+        mobileNavLinks.forEach(link => {
+          const target = link.getAttribute('data-target');
+          if (target === activeId) {
+            link.className = 'mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 font-medium';
+          } else {
+            link.className = 'mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white';
           }
         });
       }
