@@ -221,9 +221,9 @@
   <!-- ========================================================================= -->
   <!-- VIEW 2: LAB 01 - REQUEST LIFECYCLE & CACHE FLOW (Compact 1-Screen)        -->
   <!-- ========================================================================= -->
-  <main id="view-cache-flow" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+  <main id="view-cache-flow" class="hidden max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
 
-    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between overflow-hidden my-auto w-full">
       
       <!-- SUBTLE COMPACT CONTROLS BAR -->
       <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
@@ -254,9 +254,9 @@
       </div>
 
       <!-- MIDDLE: HERO SVG DIAGRAM -->
-      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
+      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden my-auto">
         
-        <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
+        <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-auto max-h-[50vh] sm:max-h-[54vh] object-contain my-auto">
           <defs>
             <filter id="glow-emerald" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
@@ -373,8 +373,8 @@
             <circle id="ripple-redis" cx="0" cy="0" r="50" fill="none" stroke="#10b981" stroke-width="2" opacity="0" />
             <rect id="halo-redis" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#10b981" stroke-width="2" />
             <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-redis)" stroke="#e11d48" stroke-width="1.5" />
-            <polygon points="0,-22 20,-11 20,11 0,22 -20,11 -20,-11" fill="#2d0f19" stroke="#f43f5e" stroke-width="1.5" />
-            <path d="M 2 -12 L -7 1 L 1 1 L -2 12 L 7 -1 L -1 -1 Z" fill="#fb7185" />
+            <!-- Official Redis Brand Logo -->
+            <image href="assets/img/stack/redis.svg" x="-20" y="-28" width="40" height="40" preserveAspectRatio="xMidYMid meet" />
             <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Redis Cache</text>
             <text id="node-redis-sub" x="0" y="76" fill="#10b981" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="10" text-anchor="middle">In-Memory RAM O(1)</text>
           </g>
@@ -384,11 +384,8 @@
             <circle id="ripple-mysql" cx="0" cy="0" r="50" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0" />
             <rect id="halo-mysql" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#334155" stroke-width="2" />
             <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-mysql)" stroke="#1e293b" stroke-width="1.5" />
-            <g transform="translate(0, -6)">
-              <ellipse cx="0" cy="-14" rx="20" ry="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
-              <path d="M -20 -14 L -20 0 A 20 6 0 0 0 20 0 L 20 -14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
-              <path d="M -20 0 L -20 14 A 20 6 0 0 0 20 14 L 20 0" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
-            </g>
+            <!-- Official MySQL Brand Logo -->
+            <image href="assets/img/stack/mysql.svg" x="-22" y="-28" width="44" height="44" preserveAspectRatio="xMidYMid meet" />
             <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">MySQL Aurora RDS</text>
             <text id="node-mysql-sub" x="0" y="76" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">InnoDB Disk Storage</text>
           </g>
@@ -424,9 +421,9 @@
   <!-- ========================================================================= -->
   <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY & WORKER POOL ARCHITECTURE DIAGRAM   -->
   <!-- ========================================================================= -->
-  <main id="view-concurrency-race" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+  <main id="view-concurrency-race" class="hidden max-w-5xl w-full mx-auto px-4 sm:px-6 py-2 sm:py-4 flex-1 flex-col justify-center items-center min-h-0">
 
-    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-3 sm:p-5 shadow-2xl flex flex-col justify-between overflow-hidden my-auto w-full">
       
       <!-- SUBTLE COMPACT CONTROLS BAR -->
       <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
@@ -461,9 +458,9 @@
       </div>
 
       <!-- MIDDLE: HERO CONCURRENCY SVG DIAGRAM (FAN-OUT / FAN-IN) -->
-      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
+      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden my-auto">
         
-        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
+        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-auto max-h-[50vh] sm:max-h-[54vh] object-contain my-auto">
           <defs>
             <filter id="glow-cyan" x="-40%" y="-40%" width="180%" height="180%">
               <feGaussianBlur stdDeviation="6" result="blur" />
