@@ -85,6 +85,25 @@
       --color-emerald-glow: rgba(16, 185, 129, 0.2);
       --color-mint: #00e887;
     }
+  
+    /* Flowing dashed pipelines for Labs */
+    @keyframes dash-forward {
+      to {
+        stroke-dashoffset: -28;
+      }
+    }
+    .pipeline-wire {
+      stroke-dasharray: 6 8;
+      animation: dash-forward 1s linear infinite;
+    }
+    .diag-node {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .diag-node:hover {
+      filter: brightness(1.2);
+    }
+
   </style>
 
   <!-- Lucide Icons -->
@@ -95,6 +114,7 @@
 
   <!-- GSAP & ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <!-- Motion (by Framer Motion team) -->
@@ -208,7 +228,7 @@
   </div>
 
   <!-- Header / Navigation -->
-  <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-[#060709]/80 border-b border-white/[0.06]">
+  <header id="portfolio-header" class="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-md bg-[#060709]/80 border-b border-white/[0.06]">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
       <!-- Brand Logo / Identity -->
@@ -904,8 +924,645 @@
 
   </main>
 
+  <!-- ========================================================================= -->
+  <!-- SPA VIEW: ENGINEERING LABS & SYSTEMS ARCHITECTURE (LAB 01 & LAB 02)       -->
+  <!-- ========================================================================= -->
+  <div id="view-labs" class="hidden min-h-screen bg-[#060709] text-slate-200 font-sans antialiased blueprint-grid flex-col justify-between selection:bg-emerald-500/30 selection:text-white overflow-x-hidden lg:overflow-hidden z-20 relative">
+<!-- NAVBAR -->
+  <header class="border-b border-white/[0.06] bg-[#060709]/90 backdrop-blur-xl sticky top-0 z-50 shrink-0">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
+      <!-- Official Unified Vector Brand Logo -->
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-7 h-7 flex items-center justify-center transition-transform group-hover:scale-110">
+          <svg class="w-full h-full" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 43 14 C 27 14 23 27 23 39 C 23 46 15 48 11 50 C 15 52 23 54 23 61 C 23 73 27 86 43 86" 
+                  class="stroke-white group-hover:stroke-emerald-400 transition-colors duration-200" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 57 14 C 73 14 77 27 77 39 C 77 46 85 48 89 50 C 85 52 77 54 77 61 C 77 73 73 86 57 86" 
+                  class="stroke-white group-hover:stroke-emerald-400 transition-colors duration-200" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-sm font-semibold text-emerald-400 tracking-tight">
+            madfauzy<span class="font-mono">.com</span>
+          </span>
+          <span class="text-xs font-mono text-slate-500 font-normal">/labs</span>
+        </div>
+      </a>
+
+      <!-- Center Status Badge -->
+      <div id="nav-center-badge" class="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-white/[0.03] border border-white/[0.08] text-slate-400">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="nav-lab-title" class="text-slate-300 font-medium">Engineering Labs Hub</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Back to Hub button (visible when inside a lab) -->
+        <button id="btn-back-hub" onclick="switchLab('hub')" class="hidden items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-emerald-400 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 transition-all cursor-pointer">
+          <i data-lucide="layout-grid" class="w-3 h-3"></i>
+          <span>Pilih Lab Lain</span>
+        </button>
+
+        <a href="/" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
+          <i data-lucide="arrow-left" class="w-3 h-3"></i>
+          <span>Portfolio</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: LABS SELECTOR HUB (Default Landing Screen)                        -->
+  <!-- ========================================================================= -->
+  <main id="view-hub" class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-1 flex flex-col justify-center min-h-0">
+    
+    <!-- Hub Header -->
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
+        <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+        <span>Backend Engineering Labs</span>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+        Pilih Simulasi Sistem
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mx-auto">
+        Visualisasi interaktif arsitektur backend, distributed caching, dan diagram concurrency performa tinggi. Pilih simulasi yang ingin kamu eksplorasi:
+      </p>
+    </div>
+
+    <!-- 2 Lab Selection Cards -->
+    <div class="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto w-full">
+      
+      <!-- CARD 1: REQUEST LIFECYCLE & CACHE FLOW -->
+      <div onclick="switchLab('cache-flow')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-emerald-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:-translate-y-1">
+        
+        <div>
+          <!-- Top Badge & Icon -->
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              LAB 01 • ARCHITECTURE
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="network" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <!-- Title & Description -->
+          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">
+            Request Lifecycle &amp; Cache Flow
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+            Simulasi diagram alur Kasir POS melintasi Backend Core, Redis RAM In-Memory, hingga proteksi beban I/O database MySQL Aurora RDS.
+          </p>
+        </div>
+
+        <!-- Metrics Preview Pill -->
+        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2 text-slate-400">
+            <span class="text-emerald-400 font-bold">2.1 ms</span>
+            <span>vs</span>
+            <span class="text-amber-400 font-bold">138 ms</span>
+          </div>
+          <span class="flex items-center gap-1.5 text-emerald-400 font-bold group-hover:translate-x-1 transition-transform">
+            <span>Buka Diagram</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- CARD 2: GOLANG CONCURRENCY & WORKER POOL FLOW -->
+      <div onclick="switchLab('concurrency-race')" class="group relative bg-[#070a0f] hover:bg-[#0c121d] border border-white/10 hover:border-cyan-500/50 rounded-2xl p-6 sm:p-7 shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] hover:-translate-y-1">
+        
+        <div>
+          <!-- Top Badge & Icon -->
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+              LAB 02 • CONCURRENCY
+            </span>
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+              <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+          </div>
+
+          <!-- Title & Description -->
+          <h2 class="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors">
+            Golang Concurrency &amp; Worker Pool
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed mb-6 font-sans">
+            Diagram arsitektur Fan-Out / Fan-In: bagaimana Go Channel mendistribusikan ribuan antrian tugas ke 4 Goroutines paralel secara simultan.
+          </p>
+        </div>
+
+        <!-- Metrics Preview Pill -->
+        <div class="pt-4 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
+          <div class="flex items-center gap-2 text-slate-400">
+            <span class="text-cyan-400 font-bold">17.0x Faster</span>
+            <span>•</span>
+            <span class="text-slate-400">Fan-Out / Fan-In</span>
+          </div>
+          <span class="flex items-center gap-1.5 text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">
+            <span>Buka Diagram</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: LAB 01 - REQUEST LIFECYCLE & CACHE FLOW (Compact 1-Screen)        -->
+  <!-- ========================================================================= -->
+  <main id="view-cache-flow" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+      
+      <!-- SUBTLE COMPACT CONTROLS BAR -->
+      <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
+        
+        <!-- Left: Route Eyebrow -->
+        <div class="flex items-center gap-2 text-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-white font-semibold">/cache-aside-flow</span>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <span class="text-slate-500 text-[11px] hidden sm:inline">Kasir POS ➔ Go/Laravel ➔ Redis RAM / MySQL</span>
+        </div>
+
+        <!-- Right: Action Controls -->
+        <div class="flex items-center gap-2">
+          <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
+            <span id="cache-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Redis:</span>
+            <strong id="cache-status-text" class="text-emerald-400 font-bold">AKTIF</strong>
+          </button>
+
+          <button id="btn-fire" onclick="simulatePacket()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+            <span>Simulasikan</span>
+            <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- MIDDLE: HERO SVG DIAGRAM -->
+      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
+        
+        <svg id="architecture-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
+          <defs>
+            <filter id="glow-emerald" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="glow-amber" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+            </marker>
+            <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+            </marker>
+            <marker id="arrow-dim" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
+            </marker>
+
+            <linearGradient id="grad-client" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#141c2b" />
+              <stop offset="100%" stop-color="#0c121d" />
+            </linearGradient>
+            <linearGradient id="grad-server" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#0e2329" />
+              <stop offset="100%" stop-color="#09141a" />
+            </linearGradient>
+            <linearGradient id="grad-redis" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#24131a" />
+              <stop offset="100%" stop-color="#140a0f" />
+            </linearGradient>
+            <linearGradient id="grad-mysql" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#111c2b" />
+              <stop offset="100%" stop-color="#090f18" />
+            </linearGradient>
+          </defs>
+
+          <!-- PIPELINE PATHS -->
+          <g id="pipe-pos-backend">
+            <path id="track-pos-backend" d="M 120 220 L 390 220" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
+            <path id="flow-pos-backend" class="pipeline-wire" d="M 120 220 L 390 220" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-green)" />
+            <text x="255" y="206" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" text-anchor="middle">HTTP POST /sku</text>
+          </g>
+
+          <g id="pipe-backend-redis">
+            <path id="track-backend-redis" d="M 390 220 C 480 220, 540 130, 680 130" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
+            <path id="flow-backend-redis" class="pipeline-wire" d="M 390 220 C 480 220, 540 130, 680 130" fill="none" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-green)" />
+            <text x="500" y="155" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="600" text-anchor="middle">1. Cek Cache</text>
+          </g>
+
+          <g id="pipe-redis-mysql">
+            <path id="track-redis-mysql" d="M 680 130 L 680 310" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
+            <path id="flow-redis-mysql" class="pipeline-wire" d="M 680 130 L 680 310" fill="none" stroke="#334155" stroke-width="3.5" stroke-linecap="round" opacity="0.3" marker-end="url(#arrow-dim)" />
+            <text id="label-miss" x="735" y="224" fill="#475569" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="600" text-anchor="middle">Cache Miss ➔</text>
+          </g>
+
+          <g id="pipe-redis-return">
+            <path id="track-redis-pos" d="M 680 130 C 510 45, 250 45, 120 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-redis-pos" class="pipeline-wire" d="M 680 130 C 510 45, 250 45, 120 220" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" opacity="0.5" marker-end="url(#arrow-green)" />
+            <text id="label-hit-return" x="380" y="58" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" opacity="0.95" text-anchor="middle">⚡ Fast Path: 2ms Response (RAM)</text>
+          </g>
+
+          <g id="pipe-mysql-return">
+            <path id="track-mysql-pos" d="M 680 310 C 510 395, 250 395, 120 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-mysql-pos" class="pipeline-wire" d="M 680 310 C 510 395, 250 395, 120 220" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" opacity="0.2" marker-end="url(#arrow-amber)" />
+            <text id="label-disk-return" x="380" y="415" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="bold" opacity="0.6" text-anchor="middle">🐢 Slow Path: 138ms Response (InnoDB Disk)</text>
+          </g>
+
+          <!-- COMET PACKET -->
+          <g id="energy-group" opacity="0" style="pointer-events: none;">
+            <circle id="packet-aura" cx="0" cy="0" r="15" fill="#10b981" opacity="0.3" filter="url(#glow-emerald)" />
+            <circle id="packet-head" cx="0" cy="0" r="9" fill="#10b981" filter="url(#glow-emerald)" />
+            <circle cx="0" cy="0" r="4" fill="#ffffff" />
+            <circle id="packet-tail-1" cx="-12" cy="0" r="6" fill="#10b981" opacity="0.75" />
+            <circle id="packet-tail-2" cx="-22" cy="0" r="3.5" fill="#10b981" opacity="0.45" />
+          </g>
+
+          <!-- NODES -->
+          <!-- 1: POS -->
+          <g id="node-pos" class="diag-node" transform="translate(120, 220)">
+            <circle id="ripple-pos" cx="0" cy="0" r="48" fill="none" stroke="#10b981" stroke-width="2" opacity="0" />
+            <rect id="halo-pos" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-client)" stroke="#1e293b" stroke-width="1.5" />
+            <rect x="-18" y="-30" width="36" height="50" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+            <rect x="-14" y="-25" width="28" height="32" rx="2" fill="#1e293b" />
+            <line x1="-8" y1="-12" x2="8" y2="-12" stroke="#10b981" stroke-width="1.5" />
+            <line x1="-8" y1="-6" x2="4" y2="-6" stroke="#10b981" stroke-width="1.5" />
+            <circle cx="0" cy="14" r="2.5" fill="#10b981" />
+            <text x="0" y="74" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Kasir POS</text>
+            <text x="0" y="90" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Merchant Client</text>
+          </g>
+
+          <!-- 2: BACKEND -->
+          <g id="node-backend" class="diag-node" transform="translate(390, 220)">
+            <circle id="ripple-backend" cx="0" cy="0" r="48" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-backend" x="-55" y="-55" width="110" height="110" rx="20" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-50" y="-50" width="100" height="100" rx="16" fill="url(#grad-server)" stroke="#1e293b" stroke-width="1.5" />
+            <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#082026" stroke="#06b6d4" stroke-width="1.5" />
+            <circle cx="0" cy="0" r="9" fill="none" stroke="#06b6d4" stroke-width="2" />
+            <circle cx="0" cy="0" r="4" fill="#06b6d4" />
+            <line x1="-15" y1="-28" x2="-15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="0" y1="-28" x2="0" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="15" y1="-28" x2="15" y2="-24" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="-15" y1="24" x2="-15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="0" y1="24" x2="0" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+            <line x1="15" y1="24" x2="15" y2="28" stroke="#06b6d4" stroke-width="1.5" />
+            <text x="0" y="74" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Backend Core</text>
+            <text x="0" y="90" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Go / Laravel App</text>
+          </g>
+
+          <!-- 3: REDIS -->
+          <g id="node-redis" class="diag-node" transform="translate(680, 130)">
+            <circle id="ripple-redis" cx="0" cy="0" r="50" fill="none" stroke="#10b981" stroke-width="2" opacity="0" />
+            <rect id="halo-redis" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#10b981" stroke-width="2" />
+            <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-redis)" stroke="#e11d48" stroke-width="1.5" />
+            <polygon points="0,-22 20,-11 20,11 0,22 -20,11 -20,-11" fill="#2d0f19" stroke="#f43f5e" stroke-width="1.5" />
+            <path d="M 2 -12 L -7 1 L 1 1 L -2 12 L 7 -1 L -1 -1 Z" fill="#fb7185" />
+            <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">Redis Cache</text>
+            <text id="node-redis-sub" x="0" y="76" fill="#10b981" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="10" text-anchor="middle">In-Memory RAM O(1)</text>
+          </g>
+
+          <!-- 4: MYSQL -->
+          <g id="node-mysql" class="diag-node" transform="translate(680, 310)">
+            <circle id="ripple-mysql" cx="0" cy="0" r="50" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0" />
+            <rect id="halo-mysql" x="-60" y="-45" width="120" height="90" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-55" y="-40" width="110" height="80" rx="14" fill="url(#grad-mysql)" stroke="#1e293b" stroke-width="1.5" />
+            <g transform="translate(0, -6)">
+              <ellipse cx="0" cy="-14" rx="20" ry="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+              <path d="M -20 -14 L -20 0 A 20 6 0 0 0 20 0 L 20 -14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+              <path d="M -20 0 L -20 14 A 20 6 0 0 0 20 14 L 20 0" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+            </g>
+            <text x="0" y="60" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" text-anchor="middle">MySQL Aurora RDS</text>
+            <text id="node-mysql-sub" x="0" y="76" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">InnoDB Disk Storage</text>
+          </g>
+        </svg>
+
+      </div>
+
+      <!-- BOTTOM ROW: REFINED TELEMETRY -->
+      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0" id="flow-indicator-light"></span>
+          <span id="flow-narrative" class="text-slate-400">
+            Sistem Standby. Tekan <strong>"Simulasikan"</strong> untuk melihat pergerakan request.
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">Latency:</span>
+            <strong id="val-latency" class="text-emerald-400 font-bold text-xs">2.1 ms</strong>
+          </div>
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">DB Disk:</span>
+            <strong id="val-db-load" class="text-emerald-400 font-bold text-xs">0 IOPS (Idle)</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: LAB 02 - GOLANG CONCURRENCY & WORKER POOL ARCHITECTURE DIAGRAM   -->
+  <!-- ========================================================================= -->
+  <main id="view-concurrency-race" class="hidden max-w-6xl w-full mx-auto px-2 sm:px-4 py-1.5 sm:py-2 flex-1 flex-col justify-center min-h-0">
+
+    <div class="relative bg-[#070a0f] border border-white/10 rounded-2xl p-2.5 sm:p-4 shadow-2xl flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+      
+      <!-- SUBTLE COMPACT CONTROLS BAR -->
+      <div class="flex items-center justify-between gap-2 pb-2 border-b border-white/[0.06] shrink-0 font-mono">
+        
+        <!-- Left: Route Info -->
+        <div class="flex items-center gap-2 text-xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+          <span class="text-white font-semibold">/fan-out-worker-pool</span>
+          <span class="text-slate-600 hidden sm:inline">•</span>
+          <span class="text-slate-500 text-[11px] hidden sm:inline">Channel Queue ➔ 4 Goroutines ➔ WaitGroup</span>
+        </div>
+
+        <!-- Right: Action Controls -->
+        <div class="flex items-center gap-2">
+          
+          <!-- Mode Toggle: Concurrency vs Sequential -->
+          <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
+            <span id="mode-indicator-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Eksekusi:</span>
+            <strong id="mode-status-text" class="text-cyan-400 font-bold">GOLANG (Paralel)</strong>
+          </button>
+
+          <!-- Primary Action: Run Simulation -->
+          <button id="btn-fire-concurrency" onclick="simulateConcurrencyDiagram()" class="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-[#060709] shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95 transition-all cursor-pointer">
+            <i data-lucide="play" class="w-3 h-3 fill-current"></i>
+            <span>Simulasikan</span>
+            <span class="opacity-60 text-[10px] font-normal hidden sm:inline">[Spasi]</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- MIDDLE: HERO CONCURRENCY SVG DIAGRAM (FAN-OUT / FAN-IN) -->
+      <div class="relative w-full flex-1 flex items-center justify-center min-h-0 py-1 overflow-hidden">
+        
+        <svg id="concurrency-diagram" viewBox="0 0 800 440" class="w-full h-full max-h-[66vh] sm:max-h-[70vh] object-contain">
+          <defs>
+            <filter id="glow-cyan" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+
+            <marker id="arrow-cyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4" />
+            </marker>
+            <marker id="arrow-amber-c" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+            </marker>
+            <marker id="arrow-dim-c" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#334155" />
+            </marker>
+
+            <linearGradient id="grad-producer" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#141c2b" />
+              <stop offset="100%" stop-color="#0c121d" />
+            </linearGradient>
+            <linearGradient id="grad-channel" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#082329" />
+              <stop offset="100%" stop-color="#06161a" />
+            </linearGradient>
+            <linearGradient id="grad-worker" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#132328" />
+              <stop offset="100%" stop-color="#0b1518" />
+            </linearGradient>
+            <linearGradient id="grad-waitgroup" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#141c2b" />
+              <stop offset="100%" stop-color="#0c121d" />
+            </linearGradient>
+          </defs>
+
+          <!-- PIPELINE 1: Producer -> Channel -->
+          <g id="pipe-c-prod-chan">
+            <path id="track-c-prod-chan" d="M 85 220 L 260 220" fill="none" stroke="#1e293b" stroke-width="5" stroke-linecap="round" />
+            <path id="flow-c-prod-chan" class="pipeline-wire" d="M 85 220 L 260 220" fill="none" stroke="#06b6d4" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+            <text x="172" y="190" fill="#64748b" font-family="'JetBrains Mono', monospace" font-size="9.5" font-weight="600" text-anchor="middle">1k Tasks ➔</text>
+          </g>
+
+          <!-- FAN-OUT BRANCHES: Channel -> 4 Workers -->
+          <!-- Branch 1 -> W1 -->
+          <g id="branch-w1">
+            <path id="track-c-chan-w1" d="M 260 220 C 350 220, 390 85, 480 85" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w1" class="pipeline-wire" d="M 260 220 C 350 220, 390 85, 480 85" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Branch 2 -> W2 (Center Primary) -->
+          <g id="branch-w2">
+            <path id="track-c-chan-w2" d="M 260 220 C 350 220, 390 175, 480 175" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w2" class="pipeline-wire" d="M 260 220 C 350 220, 390 175, 480 175" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Branch 3 -> W3 -->
+          <g id="branch-w3">
+            <path id="track-c-chan-w3" d="M 260 220 C 350 220, 390 265, 480 265" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w3" class="pipeline-wire" d="M 260 220 C 350 220, 390 265, 480 265" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Branch 4 -> W4 -->
+          <g id="branch-w4">
+            <path id="track-c-chan-w4" d="M 260 220 C 350 220, 390 355, 480 355" fill="none" stroke="#1e293b" stroke-width="4.5" stroke-linecap="round" />
+            <path id="flow-c-chan-w4" class="pipeline-wire" d="M 260 220 C 350 220, 390 355, 480 355" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- FAN-IN BRANCHES: 4 Workers -> WaitGroup Aggregator -->
+          <!-- Return W1 -> WaitGroup -->
+          <g id="return-w1">
+            <path id="track-c-w1-res" d="M 540 85 C 610 85, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w1-res" class="pipeline-wire" d="M 540 85 C 610 85, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W2 -> WaitGroup -->
+          <g id="return-w2">
+            <path id="track-c-w2-res" d="M 540 175 C 610 175, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w2-res" class="pipeline-wire" d="M 540 175 C 610 175, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W3 -> WaitGroup -->
+          <g id="return-w3">
+            <path id="track-c-w3-res" d="M 540 265 C 610 265, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w3-res" class="pipeline-wire" d="M 540 265 C 610 265, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- Return W4 -> WaitGroup -->
+          <g id="return-w4">
+            <path id="track-c-w4-res" d="M 540 355 C 610 355, 650 220, 700 220" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+            <path id="flow-c-w4-res" class="pipeline-wire" d="M 540 355 C 610 355, 650 220, 700 220" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrow-cyan)" />
+          </g>
+
+          <!-- LABELS OVER PIPES -->
+          <text x="370" y="105" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">Fan-Out ➔</text>
+          <text x="635" y="105" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold">Fan-In ➔</text>
+
+          <!-- COMET PACKETS (4 PARALLEL PACKETS) -->
+          <g id="c-packet-1" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-2" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-3" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+          <g id="c-packet-4" opacity="0" style="pointer-events: none;">
+            <circle cx="0" cy="0" r="7" fill="#06b6d4" filter="url(#glow-cyan)" />
+            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+          </g>
+
+          <!-- ==================== DIAGRAM NODES ==================== -->
+
+          <!-- 1: PRODUCER -->
+          <g id="node-c-prod" class="diag-node" transform="translate(85, 220)">
+            <circle id="ripple-c-prod" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-prod" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-producer)" stroke="#1e293b" stroke-width="1.5" />
+            <!-- Stack of jobs icon -->
+            <rect x="-18" y="-18" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-18" y="-4" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-18" y="10" width="36" height="10" rx="3" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">Job Producer</text>
+            <text x="0" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">Task Queue</text>
+          </g>
+
+          <!-- 2: GO CHANNEL (BUFFERED) -->
+          <g id="node-c-chan" class="diag-node" transform="translate(260, 220)">
+            <circle id="ripple-c-chan" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-chan" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#06b6d4" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-channel)" stroke="#0891b2" stroke-width="1.5" />
+            <!-- Channel pipe icon -->
+            <path d="M -16 -12 L 16 -12 M -16 12 L 16 12" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" />
+            <circle cx="-8" cy="0" r="4" fill="#06b6d4" />
+            <circle cx="8" cy="0" r="4" fill="#06b6d4" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">Go Channel</text>
+            <text x="0" y="82" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="bold" text-anchor="middle">make(chan Job)</text>
+          </g>
+
+          <!-- 3: 4 GOROUTINE WORKER NODES -->
+          <!-- WORKER 1 -->
+          <g id="node-w1" class="diag-node" transform="translate(510, 85)">
+            <circle id="ripple-w1" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w1" x="-60" y="-25" width="120" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-56" y="-22" width="112" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-36" cy="0" r="9" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-36" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G1</text>
+            <text x="14" y="-2" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="11.5">Go Worker #1</text>
+            <text id="sub-w1" x="14" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Goroutine Thread</text>
+          </g>
+
+          <!-- WORKER 2 (PRIMARY) -->
+          <g id="node-w2" class="diag-node" transform="translate(510, 175)">
+            <circle id="ripple-w2" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w2" x="-60" y="-25" width="120" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-56" y="-22" width="112" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-36" cy="0" r="9" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-36" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G2</text>
+            <text x="14" y="-2" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="11.5">Go Worker #2</text>
+            <text id="sub-w2" x="14" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Goroutine Thread</text>
+          </g>
+
+          <!-- WORKER 3 -->
+          <g id="node-w3" class="diag-node" transform="translate(510, 265)">
+            <circle id="ripple-w3" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w3" x="-60" y="-25" width="120" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-56" y="-22" width="112" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-36" cy="0" r="9" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-36" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G3</text>
+            <text x="14" y="-2" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="11.5">Go Worker #3</text>
+            <text id="sub-w3" x="14" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Goroutine Thread</text>
+          </g>
+
+          <!-- WORKER 4 -->
+          <g id="node-w4" class="diag-node" transform="translate(510, 355)">
+            <circle id="ripple-w4" cx="0" cy="0" r="36" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-w4" x="-60" y="-25" width="120" height="50" rx="12" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+            <rect x="-56" y="-22" width="112" height="44" rx="10" fill="url(#grad-worker)" stroke="#164e63" stroke-width="1.5" />
+            <circle cx="-36" cy="0" r="9" fill="#083344" stroke="#06b6d4" stroke-width="1.5" />
+            <text cx="-36" cy="3" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" font-weight="bold" text-anchor="middle">G4</text>
+            <text x="14" y="-2" fill="#ffffff" font-family="'JetBrains Mono', monospace" font-weight="bold" font-size="11.5">Go Worker #4</text>
+            <text id="sub-w4" x="14" y="11" fill="#06b6d4" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle">Goroutine Thread</text>
+          </g>
+
+          <!-- 4: SYNC.WAITGROUP (AGGREGATOR) -->
+          <g id="node-c-wg" class="diag-node" transform="translate(700, 220)">
+            <circle id="ripple-c-wg" cx="0" cy="0" r="44" fill="none" stroke="#06b6d4" stroke-width="2" opacity="0" />
+            <rect id="halo-c-wg" x="-50" y="-50" width="100" height="100" rx="18" fill="none" stroke="#334155" stroke-width="2" />
+            <rect x="-45" y="-45" width="90" height="90" rx="14" fill="url(#grad-waitgroup)" stroke="#1e293b" stroke-width="1.5" />
+            <!-- Checkmark badge icon -->
+            <circle cx="0" cy="-2" r="14" fill="#0f172a" stroke="#06b6d4" stroke-width="1.5" />
+            <path d="M -6 -2 L -1 3 L 7 -5" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <text x="0" y="68" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" text-anchor="middle">WaitGroup</text>
+            <text x="0" y="82" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="10" text-anchor="middle">sync.WaitGroup</text>
+          </g>
+
+        </svg>
+
+      </div>
+
+      <!-- BOTTOM ROW: REFINED TELEMETRY BAR -->
+      <div class="pt-2 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-[11px] shrink-0">
+        
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 shrink-0" id="c-indicator-light"></span>
+          <span id="c-flow-narrative" class="text-slate-400">
+            Sistem Standby. Tekan <strong>"Simulasikan"</strong> untuk melihat pergerakan concurrency.
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">Latency:</span>
+            <strong id="val-c-latency" class="text-cyan-400 font-bold text-xs">0.18s</strong>
+          </div>
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white/[0.03] border border-white/10 text-slate-300">
+            <span class="text-slate-500">Throughput:</span>
+            <strong id="val-c-throughput" class="text-emerald-400 font-bold text-xs">5,400 tasks/s</strong>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/[0.06] py-2 text-center text-[11px] font-mono text-slate-500 shrink-0">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span>{ } madfauzy.com • Backend Engineering Labs</span>
+      <div class="flex items-center gap-4">
+        <a href="/" class="hover:text-emerald-400 transition-colors">← Kembali ke Portfolio</a>
+        <a href="https://github.com/madfauzy" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">GitHub</a>
+        <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+  </div>
+
+
   <!-- MOBILE FLOATING BOTTOM DOCK (Visible on < md) -->
-  <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 md:hidden pointer-events-auto">
+  <div id="mobile-dock" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 md:hidden pointer-events-auto">
     <nav class="flex items-center gap-1 bg-[#090d14]/90 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(16,185,129,0.12)] px-2.5 py-1.5 rounded-full text-[11px] font-mono text-slate-300">
       <a href="#hero" data-target="hero" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 font-medium">home</a>
       <a href="#architecture" data-target="architecture" class="mobile-nav-item px-2.5 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white">arch</a>
@@ -1083,6 +1740,675 @@
       try { localStorage.removeItem('theme'); } catch(e) {}
 
     });
+  
+    // =========================================================================
+    // SPA CLIENT-SIDE ROUTER (PORTFOLIO <-> /LABS)
+    // =========================================================================
+    if (window.MotionPathPlugin) {
+      gsap.registerPlugin(MotionPathPlugin);
+    }
+
+    let currentLab = 'hub';
+    let redisEnabled = true;
+    let concurrencyMode = true; // true = Golang Parallel (4 workers), false = Sequential (1 worker)
+    let isBusyPacket = false;
+    let isBusyConcurrency = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) lucide.createIcons();
+      handleHashRoute();
+    });
+
+    window.addEventListener('hashchange', () => {
+      handleHashRoute();
+    });
+
+    // Hash Router
+    function handleHashRoute() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'cache-flow' || hash === 'concurrency-race') {
+        switchLab(hash, false);
+      } else {
+        switchLab('hub', false);
+      }
+    }
+
+    // View Switcher Function
+    function switchLab(targetLab, updateHash = true) {
+      if (currentLab === targetLab) return;
+      currentLab = targetLab;
+
+      if (updateHash) {
+        if (targetLab === 'hub') {
+          history.pushState(null, '', '/labs');
+        } else {
+          window.location.hash = targetLab;
+        }
+      }
+
+      const viewHub = document.getElementById('view-hub');
+      const viewCache = document.getElementById('view-cache-flow');
+      const viewRace = document.getElementById('view-concurrency-race');
+      const btnBackHub = document.getElementById('btn-back-hub');
+      const navLabTitle = document.getElementById('nav-lab-title');
+
+      // Hide all
+      [viewHub, viewCache, viewRace].forEach(v => {
+        v.classList.add('hidden');
+        v.classList.remove('flex');
+      });
+
+      if (targetLab === 'hub') {
+        viewHub.classList.remove('hidden');
+        viewHub.classList.add('flex');
+        btnBackHub.classList.add('hidden');
+        btnBackHub.classList.remove('flex');
+        navLabTitle.textContent = "Engineering Labs Hub";
+        gsap.fromTo(viewHub, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 });
+      } else if (targetLab === 'cache-flow') {
+        viewCache.classList.remove('hidden');
+        viewCache.classList.add('flex');
+        btnBackHub.classList.remove('hidden');
+        btnBackHub.classList.add('flex');
+        navLabTitle.textContent = "Lab 01: Request Lifecycle & Cache";
+        gsap.fromTo(viewCache, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
+      } else if (targetLab === 'concurrency-race') {
+        viewRace.classList.remove('hidden');
+        viewRace.classList.add('flex');
+        btnBackHub.classList.remove('hidden');
+        btnBackHub.classList.add('flex');
+        navLabTitle.textContent = "Lab 02: Golang Concurrency & Worker Pool";
+        gsap.fromTo(viewRace, { opacity: 0, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
+      }
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // =========================================================================
+    // LAB 01 CONTROLLERS: REQUEST LIFECYCLE & CACHE
+    // =========================================================================
+    function pulseRipple(nodeId, color) {
+      const ripple = document.getElementById(`ripple-${nodeId}`);
+      if (!ripple) return;
+      ripple.setAttribute('stroke', color);
+      gsap.fromTo(ripple, 
+        { scale: 0.8, opacity: 1, transformOrigin: 'center center' }, 
+        { scale: 1.6, opacity: 0, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+
+    function toggleRedisCache() {
+      if (isBusyPacket) return;
+      redisEnabled = !redisEnabled;
+
+      const btn = document.getElementById('btn-toggle-redis');
+      const dot = document.getElementById('cache-indicator-dot');
+      const statusText = document.getElementById('cache-status-text');
+      const haloRedis = document.getElementById('halo-redis');
+      const redisSub = document.getElementById('node-redis-sub');
+      const wireBr = document.getElementById('flow-backend-redis');
+      const wireRm = document.getElementById('flow-redis-mysql');
+      const labelMiss = document.getElementById('label-miss');
+      const returnHit = document.getElementById('flow-redis-pos');
+      const labelHit = document.getElementById('label-hit-return');
+
+      if (redisEnabled) {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        statusText.className = "text-emerald-400 font-bold";
+        statusText.innerText = "AKTIF";
+
+        haloRedis.setAttribute('stroke', '#10b981');
+        redisSub.setAttribute('fill', '#10b981');
+        redisSub.textContent = "In-Memory RAM O(1)";
+
+        wireBr.setAttribute('stroke', '#10b981');
+        wireRm.setAttribute('stroke', '#334155');
+        wireRm.setAttribute('opacity', '0.2');
+        wireRm.setAttribute('marker-end', 'url(#arrow-dim)');
+        labelMiss.setAttribute('fill', '#475569');
+
+        returnHit.setAttribute('opacity', '0.5');
+        labelHit.setAttribute('opacity', '0.95');
+      } else {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300 hover:border-amber-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        statusText.className = "text-amber-400 font-bold";
+        statusText.innerText = "BYPASSED";
+
+        haloRedis.setAttribute('stroke', '#475569');
+        redisSub.setAttribute('fill', '#64748b');
+        redisSub.textContent = "Bypassed (Off)";
+
+        wireBr.setAttribute('stroke', '#f59e0b');
+        wireRm.setAttribute('stroke', '#f59e0b');
+        wireRm.setAttribute('opacity', '0.8');
+        wireRm.setAttribute('marker-end', 'url(#arrow-amber)');
+        labelMiss.setAttribute('fill', '#f59e0b');
+
+        returnHit.setAttribute('opacity', '0.05');
+        labelHit.setAttribute('opacity', '0.2');
+      }
+    }
+
+    function simulatePacket() {
+      if (isBusyPacket) return;
+      isBusyPacket = true;
+
+      const energyGroup = document.getElementById('energy-group');
+      const head = document.getElementById('packet-head');
+      const aura = document.getElementById('packet-aura');
+      const tail1 = document.getElementById('packet-tail-1');
+      const tail2 = document.getElementById('packet-tail-2');
+
+      const haloPos = document.getElementById('halo-pos');
+      const haloBackend = document.getElementById('halo-backend');
+      const haloRedis = document.getElementById('halo-redis');
+      const haloMysql = document.getElementById('halo-mysql');
+      const narrative = document.getElementById('flow-narrative');
+      const light = document.getElementById('flow-indicator-light');
+      const valLatency = document.getElementById('val-latency');
+      const valDb = document.getElementById('val-db-load');
+
+      [haloPos, haloBackend, haloRedis, haloMysql].forEach(h => {
+        h.setAttribute('filter', '');
+      });
+
+      head.setAttribute('fill', '#10b981');
+      aura.setAttribute('fill', '#10b981');
+      aura.setAttribute('filter', 'url(#glow-emerald)');
+      tail1.setAttribute('fill', '#10b981');
+      tail2.setAttribute('fill', '#10b981');
+
+      light.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0";
+      narrative.innerHTML = "1. Transaksi dikirim dari Kasir POS menuju Backend...";
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isBusyPacket = false;
+        }
+      });
+
+      tl.set(energyGroup, { opacity: 1 });
+
+      tl.to(haloPos, { duration: 0.1, onStart: () => {
+        haloPos.setAttribute('stroke', '#10b981');
+        pulseRipple('pos', '#10b981');
+      }});
+
+      tl.to(energyGroup, {
+        duration: 0.55,
+        ease: "power1.inOut",
+        motionPath: {
+          path: "#track-pos-backend",
+          align: "#track-pos-backend",
+          alignOrigin: [0.5, 0.5],
+          autoRotate: true
+        }
+      });
+
+      tl.to(haloPos, { duration: 0.05, onComplete: () => haloPos.setAttribute('stroke', '#334155') });
+
+      tl.to(haloBackend, { duration: 0.1, onStart: () => {
+        haloBackend.setAttribute('stroke', '#06b6d4');
+        pulseRipple('backend', '#06b6d4');
+        narrative.innerHTML = "2. Backend menerima request. Menelusuri ketersediaan di Redis RAM...";
+      }});
+
+      if (redisEnabled) {
+        tl.to(energyGroup, {
+          duration: 0.65,
+          ease: "power1.inOut",
+          motionPath: {
+            path: "#track-backend-redis",
+            align: "#track-backend-redis",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true
+          }
+        });
+
+        tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
+
+        tl.to(haloRedis, { duration: 0.15, onStart: () => {
+          haloRedis.setAttribute('stroke', '#10b981');
+          haloRedis.setAttribute('filter', 'url(#glow-emerald)');
+          pulseRipple('redis', '#10b981');
+          narrative.innerHTML = "<strong class='text-emerald-400'>⚡ CACHE HIT!</strong> Data ditemukan di RAM. Langsung kembali lewat Fast Path!";
+        }});
+
+        tl.to(energyGroup, {
+          duration: 0.8,
+          ease: "power2.inOut",
+          motionPath: {
+            path: "#track-redis-pos",
+            align: "#track-redis-pos",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true
+          }
+        });
+
+        tl.to(haloRedis, { duration: 0.1, onComplete: () => {
+          haloRedis.setAttribute('filter', '');
+          haloRedis.setAttribute('stroke', '#10b981');
+        }});
+
+        tl.to(haloPos, { duration: 0.15, onStart: () => {
+          haloPos.setAttribute('stroke', '#10b981');
+          pulseRipple('pos', '#10b981');
+        }});
+
+        tl.to(energyGroup, { opacity: 0, duration: 0.25 });
+
+        tl.to(haloPos, { duration: 0.2, onComplete: () => {
+          haloPos.setAttribute('stroke', '#334155');
+          light.className = "w-2 h-2 rounded-full bg-emerald-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-emerald-400'>2.1 ms</strong>! Database MySQL 100% idle terlindungi.";
+          valLatency.innerText = "2.1 ms";
+          valLatency.className = "text-emerald-400 font-bold text-xs";
+          valDb.innerText = "0 IOPS (Idle)";
+          valDb.className = "text-emerald-400 font-bold text-xs";
+        }});
+
+      } else {
+        tl.to(energyGroup, {
+          duration: 0.65,
+          ease: "power1.inOut",
+          motionPath: {
+            path: "#track-backend-redis",
+            align: "#track-backend-redis",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true
+          },
+          onStart: () => {
+            head.setAttribute('fill', '#f59e0b');
+            aura.setAttribute('fill', '#f59e0b');
+            aura.setAttribute('filter', 'url(#glow-amber)');
+            tail1.setAttribute('fill', '#f59e0b');
+            tail2.setAttribute('fill', '#f59e0b');
+          }
+        });
+
+        tl.to(haloBackend, { duration: 0.05, onComplete: () => haloBackend.setAttribute('stroke', '#334155') });
+
+        tl.to(haloRedis, { duration: 0.15, onStart: () => {
+          pulseRipple('redis', '#f59e0b');
+          narrative.innerHTML = "<strong class='text-amber-400'>⚠️ CACHE MISS!</strong> Cache tidak aktif. Terpaksa dialirkan ke Database...";
+        }});
+
+        tl.to(energyGroup, {
+          duration: 0.5,
+          ease: "power1.inOut",
+          motionPath: {
+            path: "#track-redis-mysql",
+            align: "#track-redis-mysql",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true
+          }
+        });
+
+        tl.to(haloMysql, { duration: 0.2, onStart: () => {
+          haloMysql.setAttribute('stroke', '#f59e0b');
+          haloMysql.setAttribute('filter', 'url(#glow-amber)');
+          pulseRipple('mysql', '#f59e0b');
+          narrative.innerHTML = "3. <strong class='text-amber-400'>MySQL Disk Read:</strong> Menjalankan InnoDB Query...";
+        }});
+
+        tl.to({}, { duration: 0.5 });
+
+        tl.to(energyGroup, {
+          duration: 0.9,
+          ease: "power2.inOut",
+          motionPath: {
+            path: "#track-mysql-pos",
+            align: "#track-mysql-pos",
+            alignOrigin: [0.5, 0.5],
+            autoRotate: true
+          }
+        });
+
+        tl.to(haloMysql, { duration: 0.1, onComplete: () => {
+          haloMysql.setAttribute('filter', '');
+          haloMysql.setAttribute('stroke', '#334155');
+        }});
+
+        tl.to(haloPos, { duration: 0.15, onStart: () => {
+          haloPos.setAttribute('stroke', '#f59e0b');
+          pulseRipple('pos', '#f59e0b');
+        }});
+
+        tl.to(energyGroup, { opacity: 0, duration: 0.25 });
+
+        tl.to(haloPos, { duration: 0.2, onComplete: () => {
+          haloPos.setAttribute('stroke', '#334155');
+          light.className = "w-2 h-2 rounded-full bg-amber-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-amber-400'>138.4 ms</strong> (Lambat membaca disk fisik MySQL).";
+          valLatency.innerText = "138.4 ms";
+          valLatency.className = "text-amber-400 font-bold text-xs";
+          valDb.innerText = "1-2 Disk Reads";
+          valDb.className = "text-amber-400 font-bold text-xs";
+        }});
+      }
+    }
+
+    // =========================================================================
+    // LAB 02 CONTROLLERS: GOLANG CONCURRENCY & WORKER POOL DIAGRAM
+    // =========================================================================
+    function pulseConcurrencyRipple(nodeId, color) {
+      const ripple = document.getElementById(`ripple-${nodeId}`);
+      if (!ripple) return;
+      ripple.setAttribute('stroke', color);
+      gsap.fromTo(ripple, 
+        { scale: 0.8, opacity: 1, transformOrigin: 'center center' }, 
+        { scale: 1.5, opacity: 0, duration: 0.5, ease: 'power2.out' }
+      );
+    }
+
+    function toggleConcurrencyMode() {
+      if (isBusyConcurrency) return;
+      concurrencyMode = !concurrencyMode;
+
+      const btn = document.getElementById('btn-toggle-mode');
+      const dot = document.getElementById('mode-indicator-dot');
+      const statusText = document.getElementById('mode-status-text');
+      
+      const flows = ['flow-c-chan-w1', 'flow-c-chan-w3', 'flow-c-chan-w4'];
+      const retFlows = ['flow-c-w1-res', 'flow-c-w3-res', 'flow-c-w4-res'];
+      const halos = ['halo-w1', 'halo-w3', 'halo-w4'];
+      const subs = ['sub-w1', 'sub-w3', 'sub-w4'];
+
+      if (concurrencyMode) {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-cyan-400 animate-pulse";
+        statusText.className = "text-cyan-400 font-bold";
+        statusText.innerText = "GOLANG (Paralel)";
+
+        // Enable 4 wires
+        flows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+          el.setAttribute('opacity', '1');
+        });
+        retFlows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+          el.setAttribute('opacity', '0.6');
+        });
+        halos.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#06b6d4');
+        });
+        subs.forEach(id => {
+          const el = document.getElementById(id);
+          el.textContent = "Active Worker";
+          el.setAttribute('fill', '#06b6d4');
+        });
+
+      } else {
+        btn.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-amber-500/10 border-amber-500/30 text-amber-300 hover:border-amber-500/50 cursor-pointer";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        statusText.className = "text-amber-400 font-bold";
+        statusText.innerText = "SEQUENTIAL (1 Worker)";
+
+        // Dim disabled workers
+        flows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+          el.setAttribute('opacity', '0.2');
+        });
+        retFlows.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+          el.setAttribute('opacity', '0.1');
+        });
+        halos.forEach(id => {
+          const el = document.getElementById(id);
+          el.setAttribute('stroke', '#334155');
+        });
+        subs.forEach(id => {
+          const el = document.getElementById(id);
+          el.textContent = "Disabled (0 Worker)";
+          el.setAttribute('fill', '#64748b');
+        });
+      }
+    }
+
+    function simulateConcurrencyDiagram() {
+      if (isBusyConcurrency) return;
+      isBusyConcurrency = true;
+
+      const btn = document.getElementById('btn-fire-concurrency');
+      btn.classList.add('opacity-50', 'pointer-events-none');
+
+      const narrative = document.getElementById('c-flow-narrative');
+      const light = document.getElementById('c-indicator-light');
+      const valLat = document.getElementById('val-c-latency');
+      const valThroughput = document.getElementById('val-c-throughput');
+
+      const p1 = document.getElementById('c-packet-1');
+      const p2 = document.getElementById('c-packet-2');
+      const p3 = document.getElementById('c-packet-3');
+      const p4 = document.getElementById('c-packet-4');
+
+      light.className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0";
+      narrative.innerHTML = "1. Job Producer mengirim <strong>1,000 tasks</strong> ke Go Channel Queue...";
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isBusyConcurrency = false;
+          btn.classList.remove('opacity-50', 'pointer-events-none');
+        }
+      });
+
+      // Stage 1: Send batch to Channel
+      tl.set([p1, p2, p3, p4], { opacity: 0 });
+      tl.set(p1, { opacity: 1 });
+
+      tl.to('#halo-c-prod', { duration: 0.1, onStart: () => {
+        pulseConcurrencyRipple('c-prod', '#06b6d4');
+      }});
+
+      tl.to(p1, {
+        duration: 0.45,
+        ease: "power1.inOut",
+        motionPath: {
+          path: "#track-c-prod-chan",
+          align: "#track-c-prod-chan",
+          alignOrigin: [0.5, 0.5]
+        }
+      });
+
+      // Arrive at Go Channel
+      tl.to('#halo-c-chan', { duration: 0.1, onStart: () => {
+        pulseConcurrencyRipple('c-chan', '#06b6d4');
+        if (concurrencyMode) {
+          narrative.innerHTML = "2. <strong class='text-cyan-400'>FAN-OUT (Simultan):</strong> Go Channel mendistribusikan antrian serentak ke 4 Goroutines!";
+        } else {
+          narrative.innerHTML = "2. <strong class='text-amber-400'>SEQUENTIAL BOTTLENECK:</strong> Hanya 1 worker aktif, antrian menunggu satu per satu...";
+        }
+      }});
+
+      if (concurrencyMode) {
+        // ================= GOLANG PARALLEL FLOW =================
+        // Reveal all 4 packets at channel
+        tl.set([p1, p2, p3, p4], { opacity: 1 });
+
+        // Fan-Out to 4 Workers simultaneously
+        tl.to(p1, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w1", align: "#track-c-chan-w1", alignOrigin: [0.5, 0.5] } }, "+=0.05");
+        tl.to(p2, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w2", align: "#track-c-chan-w2", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p3, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w3", align: "#track-c-chan-w3", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p4, { duration: 0.55, ease: "power1.inOut", motionPath: { path: "#track-c-chan-w4", align: "#track-c-chan-w4", alignOrigin: [0.5, 0.5] } }, "<");
+
+        // All 4 Workers pulse simultaneously
+        tl.to({}, { duration: 0.1, onStart: () => {
+          pulseConcurrencyRipple('w1', '#06b6d4');
+          pulseConcurrencyRipple('w2', '#06b6d4');
+          pulseConcurrencyRipple('w3', '#06b6d4');
+          pulseConcurrencyRipple('w4', '#06b6d4');
+          narrative.innerHTML = "3. <strong class='text-cyan-300'>4 Goroutines mengeksekusi paralel di CPU cores!</strong> Memproses hasil ke WaitGroup...";
+        }});
+
+        // Fan-In to sync.WaitGroup
+        tl.to(p1, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w1-res", align: "#track-c-w1-res", alignOrigin: [0.5, 0.5] } }, "+=0.1");
+        tl.to(p2, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w2-res", align: "#track-c-w2-res", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p3, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w3-res", align: "#track-c-w3-res", alignOrigin: [0.5, 0.5] } }, "<");
+        tl.to(p4, { duration: 0.55, ease: "power2.inOut", motionPath: { path: "#track-c-w4-res", align: "#track-c-w4-res", alignOrigin: [0.5, 0.5] } }, "<");
+
+        // WaitGroup Completed!
+        tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('c-wg', '#10b981');
+          document.getElementById('halo-c-wg').setAttribute('stroke', '#10b981');
+        }});
+
+        tl.to([p1, p2, p3, p4], { opacity: 0, duration: 0.2 });
+
+        tl.to({}, { duration: 0.1, onComplete: () => {
+          document.getElementById('halo-c-wg').setAttribute('stroke', '#334155');
+          light.className = "w-2 h-2 rounded-full bg-emerald-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-cyan-300'>0.18s</strong>! 1,000 tasks tuntas berkat <strong>Fan-Out Goroutines</strong>.";
+          valLat.innerText = "0.18s";
+          valLat.className = "text-cyan-400 font-bold text-xs";
+          valThroughput.innerText = "5,420 tasks/s";
+          valThroughput.className = "text-emerald-400 font-bold text-xs";
+        }});
+
+      } else {
+        // ================= SEQUENTIAL SINGLE-THREAD FLOW =================
+        // Only W2 receives packet slowly
+        tl.to(p1, {
+          duration: 1.2,
+          ease: "linear",
+          motionPath: { path: "#track-c-chan-w2", align: "#track-c-chan-w2", alignOrigin: [0.5, 0.5] }
+        });
+
+        // W2 pulses amber slowly
+        tl.to({}, { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('w2', '#f59e0b');
+          narrative.innerHTML = "3. <strong class='text-amber-400'>1 Worker bekerja sendirian:</strong> Memproses 1,000 tasks dalam loop berurutan...";
+        }});
+
+        // Delayed processing loop simulation
+        tl.to({}, { duration: 0.8 });
+
+        // Crawl to WaitGroup
+        tl.to(p1, {
+          duration: 1.1,
+          ease: "power1.inOut",
+          motionPath: { path: "#track-c-w2-res", align: "#track-c-w2-res", alignOrigin: [0.5, 0.5] }
+        });
+
+        tl.to('#halo-c-wg', { duration: 0.2, onStart: () => {
+          pulseConcurrencyRipple('c-wg', '#f59e0b');
+        }});
+
+        tl.to(p1, { opacity: 0, duration: 0.2 });
+
+        tl.to({}, { duration: 0.1, onComplete: () => {
+          light.className = "w-2 h-2 rounded-full bg-amber-400 shrink-0";
+          narrative.innerHTML = "Selesai dalam <strong class='text-amber-400'>3.15s</strong> (Lambat karena antrian CPU bottleneck di 1 thread).";
+          valLat.innerText = "3.15s";
+          valLat.className = "text-amber-400 font-bold text-xs";
+          valThroughput.innerText = "318 tasks/s";
+          valThroughput.className = "text-amber-400 font-bold text-xs";
+        }});
+      }
+    }
+
+    // Spacebar trigger for active lab
+
+    function setRoute(route, push = true) {
+      const isLabs = route.startsWith('/labs');
+      const portfolioView = document.getElementById('view-portfolio');
+      const labsView = document.getElementById('view-labs');
+      const portfolioHeader = document.getElementById('portfolio-header');
+      const mobileDock = document.getElementById('mobile-dock');
+
+      if (isLabs) {
+        if (push) history.pushState(null, '', route);
+        portfolioView.classList.add('hidden');
+        portfolioHeader.classList.add('hidden');
+        if (mobileDock) mobileDock.classList.add('hidden');
+        labsView.classList.remove('hidden');
+        labsView.classList.add('flex');
+
+        if (window.lenis) lenis.stop();
+        window.scrollTo(0, 0);
+        document.title = "Engineering Labs & Systems Architecture — Ahmad Fauzy";
+
+        // Route to sub-hash if present
+        const hash = (route.split('#')[1] || '').trim();
+        if (hash === 'cache-flow' || hash === 'concurrency-race') {
+          switchLab(hash, false);
+        } else {
+          switchLab('hub', false);
+        }
+      } else {
+        if (push) history.pushState(null, '', route);
+        labsView.classList.add('hidden');
+        labsView.classList.remove('flex');
+        portfolioView.classList.remove('hidden');
+        portfolioHeader.classList.remove('hidden');
+        if (mobileDock) mobileDock.classList.remove('hidden');
+
+        if (window.lenis) lenis.start();
+        document.title = "Ahmad Fauzy — Backend Developer";
+
+        if (route.includes('#')) {
+          const targetId = route.split('#')[1];
+          const el = document.getElementById(targetId);
+          if (el) {
+            setTimeout(() => {
+              if (window.lenis) lenis.scrollTo(el);
+              else el.scrollIntoView({ behavior: 'smooth' });
+            }, 50);
+          }
+        }
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Intercept clicks on internal links for seamless SPA navigation
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      if (href === '/labs' || href.startsWith('/labs#')) {
+        e.preventDefault();
+        setRoute(href);
+      } else if (href === '/' || href === '/#' || href === '#hero' || href.startsWith('/#')) {
+        if (window.location.pathname.startsWith('/labs')) {
+          e.preventDefault();
+          const targetHash = href.includes('#') ? href.split('#')[1] : '';
+          setRoute('/' + (targetHash ? '#' + targetHash : ''));
+        }
+      }
+    });
+
+    // Listen for browser back / forward navigation
+    window.addEventListener('popstate', () => {
+      setRoute(window.location.pathname + window.location.hash, false);
+    });
+
+    // Check initial URL on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.location.pathname.startsWith('/labs')) {
+        setRoute(window.location.pathname + window.location.hash, false);
+      }
+    });
+
+    // Spacebar trigger for active lab
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target === document.body) {
+        e.preventDefault();
+        if (currentLab === 'cache-flow') {
+          simulatePacket();
+        } else if (currentLab === 'concurrency-race') {
+          simulateConcurrencyDiagram();
+        }
+      }
+    });
+
   </script>
 
 </body>
