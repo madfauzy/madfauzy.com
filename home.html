@@ -143,13 +143,13 @@
         </div>
       </a>
 
-      <!-- Desktop Nav -->
-      <nav class="hidden md:flex items-center gap-1 bg-white/[0.03] border border-white/[0.08] px-3 py-1.5 rounded-full text-xs font-medium text-slate-300">
-        <a href="#hero" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors text-indigo-400 font-medium">~/home</a>
-        <a href="#architecture" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/architecture</a>
-        <a href="#stack" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/stack</a>
-        <a href="#projects" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/projects</a>
-        <a href="#experience" class="px-3 py-1 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors">/experience</a>
+      <!-- Desktop / Tablet Nav -->
+      <nav class="hidden md:flex items-center gap-1 bg-white/[0.03] border border-white/[0.08] p-1 rounded-full text-xs font-medium text-slate-400">
+        <a href="#hero" data-target="hero" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-indigo-400 bg-white/[0.08] font-medium">~/home</a>
+        <a href="#architecture" data-target="architecture" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/architecture</a>
+        <a href="#stack" data-target="stack" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/stack</a>
+        <a href="#projects" data-target="projects" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/projects</a>
+        <a href="#experience" data-target="experience" class="nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]">/experience</a>
       </nav>
 
       <!-- Right CTAs -->
@@ -844,6 +844,49 @@
           if (window.Motion) {
             Motion.animate(btn, { scale: 1 }, { duration: 0.2 });
           }
+        });
+      });
+
+      // 5. Dynamic Navbar Active Color (Click & ScrollSpy)
+      const navLinks = document.querySelectorAll('.nav-item');
+      const targetIds = ['hero', 'architecture', 'stack', 'projects', 'experience'];
+      const sectionElements = targetIds.map(id => document.getElementById(id)).filter(Boolean);
+
+      function updateActiveNav(activeId) {
+        navLinks.forEach(link => {
+          const target = link.getAttribute('data-target');
+          if (target === activeId) {
+            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-indigo-400 bg-white/[0.08] font-medium';
+          } else {
+            link.className = 'nav-item px-3 py-1 rounded-full transition-all duration-200 text-slate-400 hover:text-white hover:bg-white/[0.04]';
+          }
+        });
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('data-target');
+          const targetEl = document.getElementById(targetId);
+          if (targetEl) {
+            updateActiveNav(targetId);
+            if (window.lenis) {
+              lenis.scrollTo(targetEl, { offset: -90, duration: 1.2 });
+            } else {
+              targetEl.scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // ScrollSpy: auto-switch active pill color as user scrolls
+      sectionElements.forEach(sec => {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: 'top 45%',
+          end: 'bottom 45%',
+          onEnter: () => updateActiveNav(sec.id),
+          onEnterBack: () => updateActiveNav(sec.id)
         });
       });
 
