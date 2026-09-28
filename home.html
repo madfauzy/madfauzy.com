@@ -2318,7 +2318,7 @@
 
     function setRoute(route, push = true) {
       const isLabs = route.startsWith('/labs');
-      const portfolioView = document.getElementById('view-portfolio');
+      const portfolioView = document.getElementById('view-portfolio') || document.querySelector('main');
       const labsView = document.getElementById('view-labs');
       const portfolioHeader = document.getElementById('portfolio-header');
       const mobileDock = document.getElementById('mobile-dock');
