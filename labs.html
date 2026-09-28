@@ -238,12 +238,6 @@
 
         <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
-          <!-- Sound FX Toggle -->
-          <button onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-all cursor-pointer" title="Toggle Sound FX">
-            <span class="sfx-toggle-icon text-xs">🔊</span>
-            <span class="sfx-toggle-label hidden sm:inline text-[10px]">SFX: ON</span>
-          </button>
-
           <button id="btn-toggle-redis" onclick="toggleRedisCache()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/50 cursor-pointer">
             <span id="cache-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Redis:</span>
@@ -444,12 +438,6 @@
 
         <!-- Right: Action Controls -->
         <div class="flex items-center gap-2">
-          <!-- Sound FX Toggle -->
-          <button onclick="toggleAudioSFX()" class="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white transition-all cursor-pointer" title="Toggle Sound FX">
-            <span class="sfx-toggle-icon text-xs">🔊</span>
-            <span class="sfx-toggle-label hidden sm:inline text-[10px]">SFX: ON</span>
-          </button>
-          
           <!-- Mode Toggle: Concurrency vs Sequential -->
           <button id="btn-toggle-mode" onclick="toggleConcurrencyMode()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] border transition-all bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:border-cyan-500/50 cursor-pointer">
             <span id="mode-indicator-dot" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -731,7 +719,7 @@
     class ProceduralAudioEngine {
       constructor() {
         this.ctx = null;
-        this.enabled = localStorage.getItem('labs_sfx') !== 'false';
+        this.enabled = true; // Always ON for diagram simulations
       }
 
       init() {
@@ -742,20 +730,6 @@
         if (this.ctx && this.ctx.state === 'suspended') {
           this.ctx.resume();
         }
-      }
-
-      toggle() {
-        this.enabled = !this.enabled;
-        localStorage.setItem('labs_sfx', this.enabled);
-        this.updateUI();
-        if (this.enabled) this.playClick();
-      }
-
-      updateUI() {
-        const icons = document.querySelectorAll('.sfx-toggle-icon');
-        const labels = document.querySelectorAll('.sfx-toggle-label');
-        icons.forEach(el => { el.textContent = this.enabled ? '🔊' : '🔇'; });
-        labels.forEach(el => { el.textContent = this.enabled ? 'SFX: ON' : 'SFX: OFF'; });
       }
 
       playClick() {
@@ -916,13 +890,9 @@
     }
 
     const sfx = new ProceduralAudioEngine();
-    function toggleAudioSFX() {
-      sfx.toggle();
-    }
 
     document.addEventListener('DOMContentLoaded', () => {
       if (window.lucide) lucide.createIcons();
-      sfx.updateUI();
       handleHashRoute();
     });
 
@@ -944,7 +914,6 @@
     function switchLab(targetLab, updateHash = true) {
       if (currentLab === targetLab) return;
       currentLab = targetLab;
-      sfx.playClick();
 
       if (updateHash) {
         if (targetLab === 'hub') {
