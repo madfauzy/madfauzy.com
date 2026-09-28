@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Lifecycle &amp; Cache Simulator — Ahmad Fauzy</title>
+  <meta name="description" content="Interactive visual laboratory modeling high-frequency request flows, Redis caching layers, and database query optimizations across enterprise architectures.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://madfauzy.com/playground">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://madfauzy.com/playground">
+  <meta property="og:title" content="Backend Request Lifecycle &amp; Cache Simulator — Ahmad Fauzy">
+  <meta property="og:description" content="Interactive visual simulation of high-frequency transactional flows, Redis caching, and database query latency.">
+  <meta property="og:image" content="https://madfauzy.com/assets/img/profile-picture.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="shortcut icon" href="assets/img/logo-1.png" type="image/x-icon">
+
+  <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS v4 Browser Engine -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      --color-canvas: #060709;
+      --color-surface: #0e1117;
+      --color-surface-hover: #161b22;
+      --color-surface-border: rgba(255, 255, 255, 0.08);
+      --color-brand: #10b981;
+      --color-brand-glow: rgba(16, 185, 129, 0.25);
+    }
+  </style>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- GSAP for Smooth Particle & Node Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    ::selection {
+      background: rgba(16, 185, 129, 0.35);
+      color: #ffffff;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #060709;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e2430;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #10b981;
+    }
+
+    /* Subtle grid pattern background */
+    .bg-grid-pattern {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    .glow-card {
+      background: rgba(14, 17, 23, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.25s ease;
+    }
+    .glow-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.08);
+    }
+
+    /* Pulse animation for node active states */
+    @keyframes node-pulse-emerald {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+    @keyframes node-pulse-amber {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+      50% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+    }
+    .pulse-emerald {
+      animation: node-pulse-emerald 0.8s ease-in-out infinite;
+    }
+    .pulse-amber {
+      animation: node-pulse-amber 0.8s ease-in-out infinite;
+    }
+
+    /* Pipeline conduit glow */
+    .conduit-active-emerald {
+      stroke: #10b981 !important;
+      filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.8));
+    }
+    .conduit-active-amber {
+      stroke: #f59e0b !important;
+      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8));
+    }
+  </style>
+</head>
+<body class="bg-[#060709] text-slate-200 font-sans antialiased min-h-screen selection:bg-emerald-500/30 selection:text-white relative bg-grid-pattern pb-20">
+
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#060709]/85 border-b border-white/[0.06]">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="/" class="group flex items-center gap-2 text-white font-mono text-sm tracking-tight">
+          <span class="text-white group-hover:text-emerald-400 font-bold transition-colors">{ }</span>
+          <span class="font-bold text-emerald-400">madfauzy.com</span>
+          <span class="text-slate-500">/playground</span>
+        </a>
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          System Lab Live
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] transition-all">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Portfolio</span>
+        </a>
+        <a href="https://github.com/madfauzy" target="_blank" rel="noopener noreferrer" class="p-2 text-slate-400 hover:text-white transition-colors" title="GitHub">
+          <i data-lucide="github" class="w-4 h-4"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noopener noreferrer" class="p-2 text-slate-400 hover:text-white transition-colors" title="LinkedIn">
+          <i data-lucide="linkedin" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAB COCKPIT -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-10">
+    
+    <!-- Hero Title -->
+    <div class="mb-8">
+      <div class="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-2 font-medium">
+        <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+        <span>/architecture/simulator</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+        Request Lifecycle &amp; Cache Simulator
+      </h1>
+      <p class="text-sm sm:text-base text-slate-400 max-w-3xl leading-relaxed">
+        Interactive visual telemetry modeling high-frequency backend flows across the <strong class="text-white font-medium">AYO Ecosystem</strong>. Observe how in-memory Redis caching intercepts transactions, eliminates database lock contention, and compresses response latencies from <span class="text-amber-400 font-mono">140ms</span> down to <span class="text-emerald-400 font-mono">&lt; 3ms</span>.
+      </p>
+    </div>
+
+    <!-- COCKPIT CONTROL BAR -->
+    <div class="glow-card rounded-2xl p-5 mb-8 border border-white/[0.08]">
+      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        
+        <!-- Scenario Preset Selector -->
+        <div class="flex-1">
+          <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i data-lucide="sliders" class="w-3 h-3 text-emerald-400"></i>
+            <span>Select Transaction Scenario</span>
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <button id="scenario-sku" onclick="setScenario('sku')" class="scenario-btn active px-3.5 py-2.5 rounded-xl text-left border transition-all text-xs font-mono bg-emerald-500/10 border-emerald-500/40 text-emerald-300">
+              <div class="font-bold flex items-center gap-1.5">
+                <i data-lucide="barcode" class="w-3.5 h-3.5"></i>
+                <span>AYO Kasir SKU Lookup</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-0.5">High Read / Cacheable</div>
+            </button>
+
+            <button id="scenario-checkout" onclick="setScenario('checkout')" class="scenario-btn px-3.5 py-2.5 rounded-xl text-left border transition-all text-xs font-mono bg-white/[0.02] border-white/[0.06] text-slate-300 hover:border-white/20">
+              <div class="font-bold flex items-center gap-1.5">
+                <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+                <span>AYO Kasir Checkout</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-0.5">ACID Write / Invalidation</div>
+            </button>
+
+            <button id="scenario-qoncierge" onclick="setScenario('qoncierge')" class="scenario-btn px-3.5 py-2.5 rounded-xl text-left border transition-all text-xs font-mono bg-white/[0.02] border-white/[0.06] text-slate-300 hover:border-white/20">
+              <div class="font-bold flex items-center gap-1.5">
+                <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
+                <span>AYO Qoncierge Dispatch</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-0.5">Async Order Dispatch</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Controls: Cache Toggle & Speed -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 lg:border-l lg:border-white/[0.08] lg:pl-6">
+          <!-- Redis Switch -->
+          <div>
+            <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="zap" class="w-3 h-3 text-rose-400"></i>
+              <span>Redis Cache Layer</span>
+            </label>
+            <button id="cache-toggle-btn" onclick="toggleCache()" class="flex items-center gap-2 px-3 py-2 rounded-xl border transition-all text-xs font-mono bg-emerald-500/10 border-emerald-500/30 text-emerald-300">
+              <span id="cache-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="cache-label">ENABLED (Active)</span>
+            </button>
+          </div>
+
+          <!-- Execution Triggers -->
+          <div>
+            <label class="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="play" class="w-3 h-3 text-emerald-400"></i>
+              <span>Trigger Flow</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <button id="btn-fire" onclick="fireRequest()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold bg-emerald-500 hover:bg-emerald-400 text-[#060709] shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span>Fire Request</span>
+                <span class="opacity-60 text-[10px] font-normal">[Space]</span>
+              </button>
+
+              <button id="btn-burst" onclick="fireBurst()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono text-amber-300 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all" title="Simulate 5 Rapid Requests">
+                <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                <span>Burst (x5)</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE PIPELINE DIAGRAM (SVG + DOM NODES) -->
+    <div class="glow-card rounded-2xl p-6 sm:p-8 mb-8 border border-white/[0.08] relative overflow-hidden">
+      
+      <!-- Stage Indicator -->
+      <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-6 pb-4 border-b border-white/[0.06]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-slate-500" id="flow-status-dot"></span>
+          <span id="flow-status-text">Pipeline Idle. Ready for transaction.</span>
+        </div>
+        <div class="text-[11px] text-slate-500 hidden sm:block">
+          Protocol: <span class="text-slate-300 font-mono">HTTP/2 TLS 1.3 JSON</span>
+        </div>
+      </div>
+
+      <!-- Horizontal Nodes Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative z-10" id="nodes-container">
+        
+        <!-- Node 1: Client -->
+        <div id="node-client" class="p-4 rounded-xl bg-[#0c1017] border border-white/10 text-center flex flex-col justify-between h-44 transition-all duration-300 group">
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>CLIENT</span>
+            <span class="text-slate-400">SRC-POS</span>
+          </div>
+          <div class="my-auto flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-2 transition-transform duration-300">
+              <i data-lucide="tablet-smartphone" class="w-6 h-6 text-emerald-400"></i>
+            </div>
+            <div class="text-xs font-bold text-white leading-tight">POS Terminal</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-1" id="client-subtext">Barcode Scan</div>
+          </div>
+          <div class="text-[9px] font-mono text-emerald-400/80 bg-emerald-500/10 py-1 rounded border border-emerald-500/20">
+            Bearer JWT
+          </div>
+        </div>
+
+        <!-- Node 2: Gateway -->
+        <div id="node-gateway" class="p-4 rounded-xl bg-[#0c1017] border border-white/10 text-center flex flex-col justify-between h-44 transition-all duration-300 group">
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>GATEWAY</span>
+            <span class="text-amber-400 font-bold">AWS</span>
+          </div>
+          <div class="my-auto flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-2 transition-transform duration-300">
+              <i data-lucide="shield-check" class="w-6 h-6 text-amber-400"></i>
+            </div>
+            <div class="text-xs font-bold text-white leading-tight">API Gateway &amp; WAF</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-1">Rate Limit / Auth</div>
+          </div>
+          <div class="text-[9px] font-mono text-slate-400 bg-white/[0.03] py-1 rounded border border-white/[0.06]">
+            500 req/s Throttling
+          </div>
+        </div>
+
+        <!-- Node 3: Backend Core -->
+        <div id="node-backend" class="p-4 rounded-xl bg-[#0c1017] border border-white/10 text-center flex flex-col justify-between h-44 transition-all duration-300 group">
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>MICROSERVICE</span>
+            <span class="text-cyan-400">Go / PHP</span>
+          </div>
+          <div class="my-auto flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-2 transition-transform duration-300">
+              <i data-lucide="cpu" class="w-6 h-6 text-cyan-400"></i>
+            </div>
+            <div class="text-xs font-bold text-white leading-tight">Core App Service</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-1">Business Logic</div>
+          </div>
+          <div class="text-[9px] font-mono text-cyan-300/80 bg-cyan-500/10 py-1 rounded border border-cyan-500/20">
+            Worker Pool
+          </div>
+        </div>
+
+        <!-- Node 4: Redis Cache -->
+        <div id="node-redis" class="p-4 rounded-xl bg-[#0c1017] border border-white/10 text-center flex flex-col justify-between h-44 transition-all duration-300 group">
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>IN-MEMORY</span>
+            <span class="text-rose-400">REDIS</span>
+          </div>
+          <div class="my-auto flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-2 transition-transform duration-300">
+              <i data-lucide="zap" class="w-6 h-6 text-rose-400"></i>
+            </div>
+            <div class="text-xs font-bold text-white leading-tight">Redis Cluster</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-1" id="redis-status-subtext">Key: sku:item:899</div>
+          </div>
+          <div class="text-[9px] font-mono text-rose-300/80 bg-rose-500/10 py-1 rounded border border-rose-500/20" id="redis-badge">
+            RAM: O(1) Lookup
+          </div>
+        </div>
+
+        <!-- Node 5: Database -->
+        <div id="node-db" class="p-4 rounded-xl bg-[#0c1017] border border-white/10 text-center flex flex-col justify-between h-44 transition-all duration-300 group">
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>STORAGE</span>
+            <span class="text-sky-400">RDS</span>
+          </div>
+          <div class="my-auto flex flex-col items-center">
+            <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-slate-300 mb-2 transition-transform duration-300">
+              <i data-lucide="database" class="w-6 h-6 text-sky-400"></i>
+            </div>
+            <div class="text-xs font-bold text-white leading-tight">MySQL / Aurora RDS</div>
+            <div class="text-[10px] font-mono text-slate-400 mt-1" id="db-status-subtext">InnoDB Disk</div>
+          </div>
+          <div class="text-[9px] font-mono text-slate-400 bg-white/[0.03] py-1 rounded border border-white/[0.06]" id="db-badge">
+            B-Tree Index
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Flow Explanation Capsule -->
+      <div id="flow-explanation" class="mt-6 p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] text-xs font-mono text-slate-400 flex items-center justify-between">
+        <span class="flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-emerald-400"></i>
+          <span id="explanation-text">Press <strong>"Fire Request"</strong> or hit <strong>Spacebar</strong> to trigger packet flow simulation.</span>
+        </span>
+        <span class="text-[11px] text-slate-500 hidden sm:inline" id="payload-metric">Payload: ~1.2 KB</span>
+      </div>
+
+    </div>
+
+    <!-- TELEMETRY METRICS & STRUCTURED LOG CONSOLE -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Metrics Cards (1 Col) -->
+      <div class="space-y-4">
+        
+        <!-- Metric 1: Latency -->
+        <div class="glow-card p-5 rounded-2xl border border-white/[0.08]">
+          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+            <span>ROUNDTRIP LATENCY</span>
+            <i data-lucide="timer" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span id="metric-latency" class="text-3xl sm:text-4xl font-mono font-bold text-emerald-400">2.4</span>
+            <span class="text-sm font-mono text-slate-400">ms</span>
+          </div>
+          <div class="text-[11px] font-mono text-slate-400 mt-2 flex items-center gap-1.5" id="metric-latency-desc">
+            <span class="text-emerald-400 font-bold">▲ 98.2% faster</span> than direct DB query
+          </div>
+        </div>
+
+        <!-- Metric 2: Cache Hit Status -->
+        <div class="glow-card p-5 rounded-2xl border border-white/[0.08]">
+          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+            <span>CACHE STATUS</span>
+            <i data-lucide="layers" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div class="text-xl sm:text-2xl font-mono font-bold text-emerald-300 flex items-center gap-2" id="metric-cache-status">
+            <span>CACHE HIT</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">O(1)</span>
+          </div>
+          <div class="text-[11px] font-mono text-slate-400 mt-2" id="metric-cache-desc">
+            Key retrieved directly from in-memory RAM
+          </div>
+        </div>
+
+        <!-- Metric 3: DB IOPS -->
+        <div class="glow-card p-5 rounded-2xl border border-white/[0.08]">
+          <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+            <span>DATABASE DISK I/O</span>
+            <i data-lucide="hard-drive" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div class="text-xl sm:text-2xl font-mono font-bold text-slate-200" id="metric-db-io">
+            0 Disk Operations
+          </div>
+          <div class="text-[11px] font-mono text-slate-400 mt-2" id="metric-db-desc">
+            Database completely shielded from read load
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Real-time Structured Log Terminal (2 Cols) -->
+      <div class="lg:col-span-2 glow-card rounded-2xl p-5 border border-white/[0.08] flex flex-col h-full">
+        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.06]">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="text-xs font-mono text-slate-400 ml-2">telemetry-stream.log</span>
+          </div>
+          <button onclick="clearLogs()" class="text-[11px] font-mono text-slate-500 hover:text-slate-300 transition-colors">
+            Clear Logs
+          </button>
+        </div>
+
+        <!-- Terminal Output Window -->
+        <div id="log-console" class="font-mono text-xs text-slate-300 space-y-1.5 overflow-y-auto flex-1 h-72 max-h-80 pr-2 scrollbar-thin">
+          <div class="text-slate-500">[22:30:00.000] [SYSTEM] Telemetry logger initialized. Ready.</div>
+          <div class="text-slate-500">[22:30:00.002] [CONFIG] Redis host=127.0.0.1:6379 cluster_nodes=3</div>
+          <div class="text-slate-500">[22:30:00.004] [CONFIG] MySQL pool=max_open:100 max_idle:20 rds_mode=Aurora</div>
+          <div class="text-emerald-400">[22:30:00.010] [READY] Ready to simulate requests. Hit 'Fire Request'.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CODE SNIPPET IMPLEMENTATION COMPARISON -->
+    <div class="mt-8 glow-card rounded-2xl p-6 border border-white/[0.08]">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="code" class="w-4 h-4 text-emerald-400"></i>
+            <span>Production Code Patterns</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            How this caching layer is architected in Golang and Laravel.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="tab-go" onclick="setSnippetTab('go')" class="px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300">
+            Golang (Redis)
+          </button>
+          <button id="tab-php" onclick="setSnippetTab('php')" class="px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-white/[0.03] border-white/[0.08] text-slate-400 hover:border-white/20">
+            Laravel (Cache::remember)
+          </button>
+        </div>
+      </div>
+
+      <!-- Code Block -->
+      <pre id="snippet-go" class="p-4 rounded-xl bg-[#060709] border border-white/10 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed"><code>// Golang: High-throughput concurrent SKU Lookup with Redis Cache-Aside
+func (s *InventoryService) GetSKU(ctx context.Context, barcode string) (*Item, error) {
+    cacheKey := fmt.Sprintf("sku:item:%s", barcode)
+    
+    // 1. O(1) Fast Path: Check in-memory Redis cluster
+    if val, err := s.redis.Get(ctx, cacheKey).Bytes(); err == nil {
+        var item Item
+        if err := json.Unmarshal(val, &item); err == nil {
+            telemetry.RecordCacheHit("redis") // ~2.4ms latency
+            return &item, nil
+        }
+    }
+
+    // 2. Slow Path: Fallback to Amazon RDS MySQL with Read Replica
+    item, err := s.dbRepo.FindByBarcode(ctx, barcode) // ~130ms latency
+    if err != nil {
+        return nil, err
+    }
+
+    // 3. Populate Redis asynchronously with TTL
+    go func(itm *Item) {
+        data, _ := json.Marshal(itm)
+        s.redis.Set(context.Background(), cacheKey, data, 5*time.Minute)
+    }(item)
+
+    return item, nil
+}</code></pre>
+
+      <pre id="snippet-php" class="hidden p-4 rounded-xl bg-[#060709] border border-white/10 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed"><code>&lt;?php
+namespace App\Services\AYOKasir;
+
+use Illuminate\Support\Facades\Cache;
+use App\Models\InventoryItem;
+
+class SkuLookupService
+{
+    /**
+     * Look up inventory item with resilient Redis Cache-Aside pattern.
+     */
+    public function getByBarcode(string $barcode): InventoryItem
+    {
+        $cacheKey = "sku:item:{$barcode}";
+
+        // Atomic remember: Cache HIT returns in ~2.5ms; MISS executes DB query
+        return Cache::store('redis')->remember($cacheKey, now()->addMinutes(10), function () use ($barcode) {
+            \Log::channel('telemetry')->info("CACHE MISS: Querying RDS MySQL disk for barcode: {$barcode}");
+            
+            return InventoryItem::where('barcode', $barcode)
+                ->select(['id', 'sku_code', 'name', 'price', 'stock_quantity'])
+                ->firstOrFail();
+        });
+    }
+}</code></pre>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 mt-16 pt-8 border-t border-white/[0.06] text-xs font-mono text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <span class="text-white font-bold">{ }</span>
+      <span>madfauzy.com • Engineering System Lab</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <a href="/" class="hover:text-emerald-400 transition-colors">← Back to Portfolio</a>
+      <a href="https://github.com/madfauzy" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">GitHub</a>
+      <a href="https://www.linkedin.com/in/madfauzy/" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">LinkedIn</a>
+    </div>
+  </footer>
+
+  <!-- INTERACTIVE SIMULATION JAVASCRIPT LOGIC -->
+  <script>
+    // System State
+    let isCacheEnabled = true;
+    let currentScenario = 'sku'; // 'sku', 'checkout', 'qoncierge'
+    let isAnimating = false;
+
+    const scenarios = {
+      sku: {
+        name: 'AYO Kasir SKU Lookup',
+        clientSub: 'Barcode: 8992753011',
+        payload: '{"barcode": "8992753011", "store_id": "SRC-JKT-842"}',
+        redisKey: 'sku:item:8992753011',
+        dbQuery: 'SELECT * FROM items WHERE barcode = ? LIMIT 1',
+        cacheHitLatency: 2.4,
+        cacheMissLatency: 134.8,
+        canHitCache: true
+      },
+      checkout: {
+        name: 'AYO Kasir Fast Checkout',
+        clientSub: 'Payment: Rp 45.000',
+        payload: '{"order_id": "ORD-9912", "amount": 45000, "items": 3}',
+        redisKey: 'INVALIDATE: sku:stock:899',
+        dbQuery: 'START TRANSACTION; INSERT INTO orders; UPDATE stock; COMMIT;',
+        cacheHitLatency: 18.2, // Still fast write path
+        cacheMissLatency: 182.4,
+        canHitCache: false // Writes always hit DB + invalidate cache
+      },
+      qoncierge: {
+        name: 'AYO Qoncierge Order Dispatch',
+        clientSub: 'Merchant Request',
+        payload: '{"merchant_id": "M-219", "priority": "high", "type": "restock"}',
+        redisKey: 'qoncierge:dispatch:M-219',
+        dbQuery: 'INSERT INTO order_dispatches ... (Queue Worker)',
+        cacheHitLatency: 4.8,
+        cacheMissLatency: 156.2,
+        canHitCache: true
+      }
+    };
+
+    function initIcons() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+    window.addEventListener('DOMContentLoaded', initIcons);
+
+    function setScenario(sc) {
+      currentScenario = sc;
+      document.querySelectorAll('.scenario-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-500/10', 'border-emerald-500/40', 'text-emerald-300');
+        btn.classList.add('bg-white/[0.02]', 'border-white/[0.06]', 'text-slate-300');
+      });
+      const activeBtn = document.getElementById(`scenario-${sc}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-500/10', 'border-emerald-500/40', 'text-emerald-300');
+        activeBtn.classList.remove('bg-white/[0.02]', 'border-white/[0.06]', 'text-slate-300');
+      }
+
+      const cfg = scenarios[sc];
+      document.getElementById('client-subtext').innerText = cfg.clientSub;
+      document.getElementById('redis-status-subtext').innerText = cfg.redisKey;
+      logMessage('CONFIG', `Active scenario changed to [${cfg.name}]`);
+    }
+
+    function toggleCache() {
+      isCacheEnabled = !isCacheEnabled;
+      const btn = document.getElementById('cache-toggle-btn');
+      const dot = document.getElementById('cache-dot');
+      const label = document.getElementById('cache-label');
+      const redisBadge = document.getElementById('redis-badge');
+
+      if (isCacheEnabled) {
+        btn.className = "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all text-xs font-mono bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        label.innerText = "ENABLED (Active)";
+        redisBadge.className = "text-[9px] font-mono text-rose-300/80 bg-rose-500/10 py-1 rounded border border-rose-500/20";
+        redisBadge.innerText = "RAM: O(1) Lookup";
+        logMessage('CACHE', 'Redis in-memory caching ENABLED');
+      } else {
+        btn.className = "flex items-center gap-2 px-3 py-2 rounded-xl border transition-all text-xs font-mono bg-amber-500/10 border-amber-500/30 text-amber-300";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        label.innerText = "BYPASSED (Off)";
+        redisBadge.className = "text-[9px] font-mono text-slate-500 bg-white/[0.02] py-1 rounded border border-white/[0.06]";
+        redisBadge.innerText = "BYPASSED";
+        logMessage('WARN', 'Redis caching BYPASSED. All read queries will hit MySQL Disk.');
+      }
+    }
+
+    function getTimestamp() {
+      const now = new Date();
+      return now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0');
+    }
+
+    function logMessage(level, text) {
+      const consoleEl = document.getElementById('log-console');
+      const line = document.createElement('div');
+      
+      let colorClass = 'text-slate-300';
+      if (level === 'ERROR') colorClass = 'text-red-400';
+      else if (level === 'WARN') colorClass = 'text-amber-400';
+      else if (level === 'SUCCESS') colorClass = 'text-emerald-400 font-bold';
+      else if (level === 'HIT') colorClass = 'text-emerald-400';
+      else if (level === 'MISS') colorClass = 'text-amber-300';
+
+      line.className = `${colorClass} text-xs font-mono`;
+      line.innerHTML = `<span class="text-slate-500">[${getTimestamp()}]</span> <span class="font-semibold">[${level}]</span> ${text}`;
+      
+      consoleEl.appendChild(line);
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    function clearLogs() {
+      const consoleEl = document.getElementById('log-console');
+      consoleEl.innerHTML = `<div class="text-slate-500">[${getTimestamp()}] [SYSTEM] Telemetry log cleared. Ready.</div>`;
+    }
+
+    // Main Simulation Execution
+    function fireRequest() {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      const sc = scenarios[currentScenario];
+      const isCacheHit = isCacheEnabled && sc.canHitCache;
+      const calculatedLatency = isCacheHit ? sc.cacheHitLatency : sc.cacheMissLatency;
+
+      const statusDot = document.getElementById('flow-status-dot');
+      const statusText = document.getElementById('flow-status-text');
+      const expText = document.getElementById('explanation-text');
+
+      statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+      statusText.innerText = `Dispatching ${sc.name}...`;
+
+      logMessage('REQUEST', `POST /api/v1/checkout/execute payload=${sc.payload}`);
+
+      // GSAP Node timeline
+      const nodeClient = document.getElementById('node-client');
+      const nodeGw = document.getElementById('node-gateway');
+      const nodeBack = document.getElementById('node-backend');
+      const nodeRedis = document.getElementById('node-redis');
+      const nodeDb = document.getElementById('node-db');
+
+      // Reset styles
+      [nodeClient, nodeGw, nodeBack, nodeRedis, nodeDb].forEach(n => {
+        n.classList.remove('pulse-emerald', 'pulse-amber', 'border-emerald-500', 'border-amber-500');
+      });
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isAnimating = false;
+          statusDot.className = "w-2 h-2 rounded-full bg-slate-500";
+          statusText.innerText = `Idle. Last execution: ${calculatedLatency}ms`;
+        }
+      });
+
+      // Step 1: Client -> Gateway
+      tl.to(nodeClient, { borderColor: '#10b981', duration: 0.15, onStart: () => {
+        nodeClient.classList.add('pulse-emerald');
+      }});
+
+      tl.to(nodeGw, { borderColor: '#10b981', duration: 0.2, onStart: () => {
+        nodeClient.classList.remove('pulse-emerald');
+        nodeGw.classList.add('pulse-emerald');
+        logMessage('GATEWAY', 'AWS WAF verified Bearer token. Rate-limit quota OK (0.6ms).');
+      }});
+
+      // Step 2: Gateway -> Backend Service
+      tl.to(nodeBack, { borderColor: '#10b981', duration: 0.2, onStart: () => {
+        nodeGw.classList.remove('pulse-emerald');
+        nodeBack.classList.add('pulse-emerald');
+        logMessage('BACKEND', `Worker goroutine processing ${currentScenario.toUpperCase()} logic`);
+      }});
+
+      // Step 3: Check Redis
+      tl.to(nodeRedis, { borderColor: isCacheHit ? '#10b981' : '#f59e0b', duration: 0.2, onStart: () => {
+        nodeBack.classList.remove('pulse-emerald');
+        if (isCacheHit) {
+          nodeRedis.classList.add('pulse-emerald');
+          logMessage('HIT', `REDIS GET "${sc.redisKey}" -> CACHE HIT! Payload retrieved from RAM.`);
+        } else {
+          nodeRedis.classList.add('pulse-amber');
+          logMessage('MISS', `REDIS GET "${sc.redisKey}" -> CACHE MISS / BYPASSED. Fallback to Disk.`);
+        }
+      }});
+
+      // Branch A: Cache HIT -> Immediate Return to Client
+      if (isCacheHit) {
+        tl.to(nodeRedis, { duration: 0.25, onComplete: () => {
+          nodeRedis.classList.remove('pulse-emerald');
+          nodeClient.classList.add('pulse-emerald');
+          
+          updateMetrics(true, calculatedLatency);
+          logMessage('SUCCESS', `HTTP/2 200 OK — Roundtrip completed in ${calculatedLatency}ms (Cache Hit)`);
+          expText.innerHTML = `<strong>CACHE HIT!</strong> Redis returned the payload directly in <strong>${calculatedLatency}ms</strong>. Database was 100% bypassed.`;
+        }});
+
+        tl.to(nodeClient, { duration: 0.3, onComplete: () => {
+          nodeClient.classList.remove('pulse-emerald');
+        }});
+
+      } else {
+        // Branch B: Cache MISS or Write -> Hit Database
+        tl.to(nodeDb, { borderColor: '#f59e0b', duration: 0.35, onStart: () => {
+          nodeRedis.classList.remove('pulse-amber');
+          nodeDb.classList.add('pulse-amber');
+          logMessage('DB_EXEC', `RDS MySQL Query: "${sc.dbQuery}"`);
+        }});
+
+        tl.to(nodeDb, { duration: 0.4, onComplete: () => {
+          nodeDb.classList.remove('pulse-amber');
+          nodeClient.classList.add('pulse-amber');
+          
+          updateMetrics(false, calculatedLatency);
+          logMessage('SUCCESS', `HTTP/2 200 OK — Roundtrip completed in ${calculatedLatency}ms (Disk I/O required)`);
+          expText.innerHTML = `<strong>DATABASE DISK ACCESS:</strong> Query executed on MySQL in <strong>${calculatedLatency}ms</strong> due to cache miss / write lock.`;
+        }});
+
+        tl.to(nodeClient, { duration: 0.3, onComplete: () => {
+          nodeClient.classList.remove('pulse-amber');
+        }});
+      }
+    }
+
+    function updateMetrics(isHit, latency) {
+      const latEl = document.getElementById('metric-latency');
+      const latDesc = document.getElementById('metric-latency-desc');
+      const cacheStatusEl = document.getElementById('metric-cache-status');
+      const cacheDesc = document.getElementById('metric-cache-desc');
+      const dbIoEl = document.getElementById('metric-db-io');
+      const dbDesc = document.getElementById('metric-db-desc');
+
+      latEl.innerText = latency;
+
+      if (isHit) {
+        latEl.className = "text-3xl sm:text-4xl font-mono font-bold text-emerald-400";
+        latDesc.innerHTML = `<span class="text-emerald-400 font-bold">▲ 98.2% faster</span> than direct DB query`;
+        
+        cacheStatusEl.innerHTML = `<span>CACHE HIT</span><span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">O(1)</span>`;
+        cacheStatusEl.className = "text-xl sm:text-2xl font-mono font-bold text-emerald-300 flex items-center gap-2";
+        cacheDesc.innerText = "Key retrieved directly from in-memory RAM";
+
+        dbIoEl.innerText = "0 Disk Operations";
+        dbIoEl.className = "text-xl sm:text-2xl font-mono font-bold text-slate-200";
+        dbDesc.innerText = "Database completely shielded from read load";
+      } else {
+        latEl.className = "text-3xl sm:text-4xl font-mono font-bold text-amber-400";
+        latDesc.innerHTML = `<span class="text-amber-400 font-bold">▼ Disk bottleneck</span> Disk I/O & table lock latency`;
+
+        cacheStatusEl.innerHTML = `<span>CACHE MISS</span><span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">BYPASSED</span>`;
+        cacheStatusEl.className = "text-xl sm:text-2xl font-mono font-bold text-amber-400 flex items-center gap-2";
+        cacheDesc.innerText = "Full table lookup or write commit required";
+
+        dbIoEl.innerText = "1-2 InnoDB Disk Reads";
+        dbIoEl.className = "text-xl sm:text-2xl font-mono font-bold text-amber-400";
+        dbDesc.innerText = "Storage IOPS incurred on Amazon RDS MySQL";
+      }
+    }
+
+    // Rapid burst test
+    function fireBurst() {
+      if (isAnimating) return;
+      let count = 0;
+      logMessage('BURST', 'Starting burst test: 5 consecutive transactions...');
+      const interval = setInterval(() => {
+        if (count >= 5) {
+          clearInterval(interval);
+          logMessage('BURST', 'Burst test completed. All 5 requests returned HTTP 200 OK.');
+        } else {
+          fireRequest();
+          count++;
+        }
+      }, 700);
+    }
+
+    // Snippet Tab Switch
+    function setSnippetTab(lang) {
+      const tabGo = document.getElementById('tab-go');
+      const tabPhp = document.getElementById('tab-php');
+      const codeGo = document.getElementById('snippet-go');
+      const codePhp = document.getElementById('snippet-php');
+
+      if (lang === 'go') {
+        tabGo.className = "px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+        tabPhp.className = "px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-white/[0.03] border-white/[0.08] text-slate-400 hover:border-white/20";
+        codeGo.classList.remove('hidden');
+        codePhp.classList.add('hidden');
+      } else {
+        tabPhp.className = "px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+        tabGo.className = "px-3 py-1.5 rounded-lg text-xs font-mono border transition-all bg-white/[0.03] border-white/[0.08] text-slate-400 hover:border-white/20";
+        codePhp.classList.remove('hidden');
+        codeGo.classList.add('hidden');
+      }
+    }
+
+    // Keyboard shortcut (Spacebar triggers request)
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target === document.body) {
+        e.preventDefault();
+        fireRequest();
+      }
+    });
+  </script>
+</body>
+</html>
